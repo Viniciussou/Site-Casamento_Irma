@@ -100,7 +100,21 @@ class WeddingInvite {
         if (this.isEnvelopeOpen) return this.navigateToScreen('info');
         this.isEnvelopeOpen = true;
         envelope.classList.add('opening');
-        setTimeout(() => this.navigateToScreen('info'), 2000);
+
+        setTimeout(() => {
+            this.navigateToScreen('info');
+
+            // 🎵 Tocar música após interação do usuário
+            if (!this.isMusicPlaying && !this.musicEnded) {
+                this.backgroundMusic.play().then(() => {
+                    this.isMusicPlaying = true;
+                    this.musicToggleBtn && (this.musicToggleBtn.innerHTML = '<i class="fas fa-pause"></i>');
+                    if (this.musicControl) this.musicControl.style.display = 'flex';
+                }).catch(() => {
+                    console.warn('Clique em play para iniciar a música.');
+                });
+            }
+        }, 2000);
     }
 
     navigateToScreen(screenName) {
@@ -122,12 +136,11 @@ class WeddingInvite {
             targetScreenEl.classList.add('active');
             this.currentScreen = screenName;
 
-            // 🎵 Música só começa na segunda tela (info)
-            if (screenName === 'info' && !this.isMusicPlaying && !this.musicEnded) {
+            // Mostrar controles de música, mas não tentar tocar
+            if (screenName === 'info') {
                 if (this.musicControl) {
                     this.musicControl.style.display = 'flex';
                 }
-                this.toggleMusic();
             } else if (this.musicControl) {
                 this.musicControl.style.display = 'none';
             }
