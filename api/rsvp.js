@@ -23,7 +23,7 @@ async function connectToDatabase() {
 
   try {
     await client.connect();
-    const db = client.db("wedding_rsvp"); // Nome do seu banco
+    const db = client.db("magnorum"); // Nome do seu banco
     cachedClient = client;
     cachedDb = db;
     return { client, db };
