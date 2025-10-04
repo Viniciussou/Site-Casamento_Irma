@@ -6,7 +6,7 @@
   "main": "api/rsvp.js",
   "scripts": {
     "start": "node api/rsvp.js",
-    "dev": "vercel dev"
+    "dev": "node api/rsvp.js"
   },
   "keywords": [],
   "author": "",
