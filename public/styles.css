@@ -1132,7 +1132,24 @@ p {
 }
 
 /* Buttons */
-.btn-elegant,
+.btn-elegant{
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 200px;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
 .btn-secondary,
 .btn-back,
 .btn-elegant-page,
