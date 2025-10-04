@@ -1296,12 +1296,6 @@ p {
     gap: 2rem;
 }
 
-.admin-header h2 {
-    font-size: 2.5rem;
-    color: #333333;
-    margin-bottom: 0.5rem;
-}
-
 .admin-header p {
     color: #333333;
     opacity: 0.7;
@@ -1312,23 +1306,6 @@ p {
     gap: 1rem;
 }
 
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.stat-card {
-    background: rgba(255, 255, 255, 0.8); /* Fundo mais claro e transparente */
-    border: 1px solid var(--gold-transparent);
-    border-radius: var(--border-radius);
-    padding: 2rem;
-    text-align: center;
-    box-shadow: var(--shadow-light);
-    transition: var(--transition-smooth);
-    backdrop-filter: blur(5px);
-}
 
 .stat-card:hover {
     transform: translateY(-2px);
@@ -1370,15 +1347,6 @@ p {
     font-size: 0.9rem;
 }
 
-.admin-table-container {
-    background: rgba(255, 255, 255, 0.8); /* Fundo mais claro e transparente */
-    border: 1px solid var(--gold-transparent);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow-medium);
-    backdrop-filter: blur(5px);
-}
-
 .table-header {
     background: var(--primary-gold);
     padding: 1.5rem;
@@ -1391,14 +1359,6 @@ p {
     margin: 0;
 }
 
-.table-wrapper {
-    overflow-x: auto;
-}
-
-.rsvp-table {
-    width: 100%;
-    border-collapse: collapse;
-}
 
 .rsvp-table th {
     background: rgba(212, 175, 55, 0.1);
@@ -1409,11 +1369,6 @@ p {
     border-bottom: 1px solid var(--gold-transparent);
 }
 
-.rsvp-table td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-    color: #333333;
-}
 
 .rsvp-table tr:hover {
     background: rgba(212, 175, 55, 0.05);
@@ -1978,3 +1933,81 @@ p {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ====== Admin Screen Melhorada ====== */
+#adminScreen .screen-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.admin-header h2 {
+    font-size: 2.8rem;
+    color: var(--primary-gold);
+    text-shadow: 0 0 8px rgba(65,105,225,0.2);
+}
+
+.admin-table-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--gold-transparent);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    max-height: 70vh;
+}
+
+.rsvp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.rsvp-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--primary-gold);
+    color: white;
+    text-align: left;
+    padding: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    z-index: 2;
+}
+
+.rsvp-table tbody tr:nth-child(even) {
+    background-color: rgba(240, 240, 255, 0.6);
+}
+
+.rsvp-table tbody tr:hover {
+    background-color: rgba(65, 105, 225, 0.1);
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+.rsvp-table td {
+    padding: 1rem;
+    color: #333;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Estatísticas */
+.stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    max-width: 1100px;
+    margin: 0 auto 2rem auto;
+}
+
+.stat-card {
+    background: linear-gradient(145deg, #ffffff, #f3f4f6);
+    border: 1px solid rgba(65,105,225,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
