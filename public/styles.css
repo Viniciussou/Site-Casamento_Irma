@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Cormorant Garamond', 'Times New Roman', serif;
-    background: url('assets/flores-azul.jpg') no-repeat center center fixed;
+    background: linear-gradient(135deg, var(--dark-navy) 0%, var(--midnight-blue) 30%, #2d3f63 70%, var(--midnight-blue) 100%);
     min-height: 100vh;
     overflow: hidden;
     color: #333333; /* Cor do texto mais escura para contraste */
@@ -20,7 +20,7 @@ h1, h2, h3 {
     font-weight: 500;
     line-height: 1.3;
     letter-spacing: 0.5px;
-    color: #333333; /* Cor do texto mais escura */
+    color:var(--accent-silver); /* Cor do texto mais escura */
 }
 
 h1 {
@@ -29,6 +29,7 @@ h1 {
 
 h2 {
     font-size: 2.8rem;
+    color: var(--accent-silver);
 }
 
 h3 {
@@ -39,6 +40,18 @@ p {
     font-weight: 300;
     line-height: 1.8;
     color: #333333; /* Cor do texto mais escura */
+}
+
+.texto1 {
+    font-weight: 300;
+    line-height: 1.8;
+    color: #333333; /* Cor do texto mais escura */
+}
+
+.texto2 {
+    font-weight: 300;
+    line-height: 1.8;
+    color: #C0C0C0; /* Cor do texto mais escura */
 }
 
 /* CSS Variables */
@@ -529,14 +542,14 @@ p {
 
 .welcome-title {
     font-size: 3.5rem;
-    color: #333333;
+    color: var(--accent-silver);
     margin: 1.5rem 0;
     text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .welcome-subtitle {
     font-size: 1.3rem;
-    color: #333333;
+    color: var(--accent-silver);
     opacity: 0.8;
     font-style: italic;
 }
@@ -653,7 +666,7 @@ p {
 .hint {
     margin-top: 1rem;
     font-size: 0.9rem;
-    color: #666666;
+    color: var(--accent-silver);
 }
 
 /* Info Screen */
@@ -803,6 +816,10 @@ p {
     margin-bottom: 3rem;
 }
 
+.floral-decoration{
+    color: var(--accent-silver);
+}
+
 .elegant-decoration {
     font-size: 2rem;
     color: var(--primary-gold);
@@ -811,7 +828,7 @@ p {
 
 .rules-header h2 {
     font-size: 3rem;
-    color: #333333;
+    color: var(--accent-silver);
     margin-bottom: 1rem;
 }
 
@@ -831,7 +848,7 @@ p {
 
 .rules-subtitle {
     font-size: 1.1rem;
-    color: #333333;
+    color: var(--accent-silver);
     opacity: 0.8;
     font-style: italic;
 }
@@ -891,7 +908,7 @@ p {
 }
 
 .rule-item.joy {
-    background: rgba(120, 201, 120, 0.1);
+    background: rgba(30, 233, 30, 0.1);
     border-color: #78c978;
 }
 
@@ -919,7 +936,7 @@ p {
 .rule-content p {
     font-size: 1.1rem;
     font-weight: 400;
-    color: #333333;
+    color: black;
     line-height: 1.5;
     margin-bottom: 0.5rem;
 }
@@ -950,13 +967,13 @@ p {
 
 .rsvp-header h2 {
     font-size: 3.2rem;
-    color: #333333;
+    color: var(--accent-silver);
     margin-bottom: 1rem;
 }
 
 .rsvp-subtitle {
     font-size: 1.2rem;
-    color: #333333;
+    color: var(--accent-silver);
     opacity: 0.8;
     font-style: italic;
 }

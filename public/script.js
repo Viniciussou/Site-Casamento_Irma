@@ -5,8 +5,8 @@ class WeddingInvite {
         this.rsvpData = []; // Dados do backend
         this.isEnvelopeOpen = false;
         this.isSubmitting = false;
-        this.backendUrl = '/api'; // Base URL backend
-        
+        this.backendUrl = '/api/rsvp';
+
         // Elementos de música
         this.backgroundMusic = document.getElementById('backgroundMusic');
         this.musicToggleBtn = document.getElementById('musicToggleBtn');
@@ -24,7 +24,7 @@ class WeddingInvite {
         this.closeFeedbackBtn = document.getElementById('closeFeedback');
         this.successSound = document.getElementById('successSound');
         this.failSound = document.getElementById('failSound');
-        
+
         this.init();
     }
 
@@ -63,6 +63,7 @@ class WeddingInvite {
         document.getElementById('exportCSV')?.addEventListener('click', () => this.exportCSV());
         this.closeFeedbackBtn?.addEventListener('click', () => this.hideFeedbackOverlay());
     }
+
 
     setupMusicPlayer() {
         this.musicToggleBtn?.addEventListener('click', () => this.toggleMusic());
@@ -105,23 +106,39 @@ class WeddingInvite {
     navigateToScreen(screenName) {
         const currentScreenEl = document.querySelector('.screen.active');
         const targetScreenEl = document.getElementById(`${screenName}Screen`);
-        if (!targetScreenEl || currentScreenEl === targetScreenEl) return;
 
-        currentScreenEl.classList.add('exiting');
-        currentScreenEl.classList.remove('active');
+        // ✅ Proteção contra null
+        if (!targetScreenEl) {
+            console.warn(`Tela "${screenName}Screen" não encontrada no DOM.`);
+            return;
+        }
+        if (currentScreenEl === targetScreenEl) return;
+
+        // ✅ Proteção extra caso currentScreenEl seja null
+        if (currentScreenEl) {
+            currentScreenEl.classList.add('exiting');
+            currentScreenEl.classList.remove('active');
+        }
 
         setTimeout(() => {
             targetScreenEl.classList.add('active');
             this.currentScreen = screenName;
 
+            // 🎵 Mostrar controle de música apenas nas telas certas
             if ((screenName === 'info' || screenName === 'rsvp') && !this.isMusicPlaying && !this.musicEnded) {
-                this.musicControl && (this.musicControl.style.display = 'flex');
+                if (this.musicControl) {
+                    this.musicControl.style.display = 'flex';
+                }
                 this.toggleMusic();
-            } else {
-                this.musicControl && (this.musicControl.style.display = 'none');
+            } else if (this.musicControl) {
+                this.musicControl.style.display = 'none';
             }
 
-            setTimeout(() => currentScreenEl.classList.remove('exiting'), 100);
+            // ✅ Evita erro se currentScreenEl for null
+            if (currentScreenEl) {
+                setTimeout(() => currentScreenEl.classList.remove('exiting'), 100);
+            }
+
             this.animateScreenEntrance(screenName);
         }, 300);
     }
@@ -264,7 +281,7 @@ class WeddingInvite {
 
     async loadRSVPDataFromBackend() {
         try {
-            const response = await fetch(`${this.backendUrl}/rsvps`);
+            const response = await fetch(`${this.backendUrl}`);
             if (!response.ok) throw new Error('Erro ao carregar dados do RSVP.');
             this.rsvpData = (await response.json()).map(item => ({ ...item, createdAt: new Date(item.createdAt) }));
             this.updateAdminStats();
@@ -535,7 +552,7 @@ class AnimationManager {
 document.addEventListener('DOMContentLoaded', () => {
     const weddingInvite = new WeddingInvite();
     const animationManager = new AnimationManager();
-    
+
     // Add some additional interactive effects
     const addInteractiveEffects = () => {
         // Add typing effect for quotes
@@ -551,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(typeWriter, 50);
                 }
             };
-            
+
             // Start typing when element becomes visible
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {

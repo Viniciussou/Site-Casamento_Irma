@@ -1,6 +1,7 @@
 {
   "name": "site-convite-casamento",
   "version": "1.0.0",
+  "type": "module",
   "description": "This is a code bundle for Site Convite Casamento. The original project is available at https://www.figma.com/design/5YCL7uNxLWG0qtkxXUxLHR/Site-Convite-Casamento.",
   "main": "api/rsvp.js",
   "scripts": {

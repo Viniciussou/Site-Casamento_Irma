@@ -11,15 +11,14 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
+
     <!-- Music Control -->
-    <div class="music-control" id="musicControl" style="display: none;">
-        <button class="music-btn" id="musicToggleBtn">
-            <i class="fas fa-play"></i>
-        </button>
+    <div class="music-control" id="musicControl" style="display:none;">
+        <button class="music-btn" id="musicToggleBtn"><i class="fas fa-play"></i></button>
         <div class="music-info">
             <span class="music-title">Nossa Música</span>
             <div class="music-progress">
@@ -27,20 +26,15 @@
             </div>
         </div>
     </div>
-    <audio id="backgroundMusic" loop>
-        <!-- ATENÇÃO: Substitua 'caminho/para/sua/musica.mp3' pelo URL real do seu arquivo de áudio hospedado -->
-        <source src="assets/Alex Warren - Ordinary (Lyrics) - 7clouds (youtube).mp3" type="audio/mpeg">
-        Seu navegador não suporta o elemento de áudio.
-    </audio>
 
-    <!-- Audio for feedback -->
+    <audio id="backgroundMusic" loop>
+        <source src="/assets/Music1.mp3" type="audio/mpeg">
+    </audio>
     <audio id="successSound">
-        <!-- ATENÇÃO: Substitua 'caminho/para/seu/som_vitoria.mp3' pelo URL real do seu arquivo de áudio hospedado -->
-        <source src="assets/Victory Sound Effect - Der Test (youtube).mp3" type="audio/mpeg">
+        <source src="/assets/Music2V.mp3" type="audio/mpeg">
     </audio>
     <audio id="failSound">
-        <!-- ATENÇÃO: Substitua 'caminho/para/seu/som_fracasso.mp3' pelo URL real do seu arquivo de áudio hospedado -->
-        <source src="assets/EFEITOS SONOROSFRACASSO#1 - Ƥrox† Br (youtube).mp3" type="audio/mpeg">
+        <source src="/assets/Music3F.mp3" type="audio/mpeg">
     </audio>
 
     <div class="wedding-container">
@@ -341,7 +335,7 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Confirmar presença até 09/01/2026</p>
+                            <p class="texto1">Confirmar presença até 09/01/2026</p>
                             <span class="rule-badge">IMPORTANTE</span>
                         </div>
                     </div>
@@ -351,7 +345,7 @@
                             <i class="fas fa-mobile-alt"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Deixar celular no silencioso</p>
+                            <p class="texto1">Deixar celular no silencioso</p>
                         </div>
                     </div>
 
@@ -360,7 +354,7 @@
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Não convidar outras pessoas</p>
+                            <p class="texto1">Não convidar outras pessoas</p>
                         </div>
                     </div>
 
@@ -369,7 +363,7 @@
                             <i class="fas fa-camera"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Não dificultar o trabalho dos fotógrafos</p>
+                            <p class="texto1">Não dificultar o trabalho dos fotógrafos</p>
                         </div>
                     </div>
 
@@ -378,7 +372,7 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Não se atrasar, seja pontual</p>
+                            <p class="texto1">Não se atrasar, seja pontual</p>
                         </div>
                     </div>
 
@@ -387,7 +381,7 @@
                             <i class="fas fa-heart"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Participar da cerimônia</p>
+                            <p class="texto1">Participar da cerimônia</p>
                         </div>
                     </div>
 
@@ -396,7 +390,7 @@
                             <i class="fas fa-palette"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Não usar branco, é a cor da noiva</p>
+                            <p class="texto2">Não usar branco, é a cor da noiva</p>
                         </div>
                     </div>
 
@@ -405,7 +399,7 @@
                             <i class="fas fa-smile"></i>
                         </div>
                         <div class="rule-content">
-                            <p>Aproveite muito! ♥</p>
+                            <p class="texto2">Aproveite muito! ♥</p>
                         </div>
                     </div>
                 </div>
@@ -626,8 +620,8 @@
         <div class="feedback-overlay" id="successFeedback" style="display: none;">
             <div class="feedback-content">
                 <!-- ATENÇÃO: Substitua 'images.png' e 'fashionable-flork-meme-hilarious-hipster-260nw-2324370215.webp' pelos URLs reais das suas imagens hospedadas -->
-                <img src="images.png" alt="Sucesso" class="feedback-image" id="successImage" style="display: none;">
-                <img src="fashionable-flork-meme-hilarious-hipster-260nw-2324370215.webp" alt="Triste"
+                <img src="/images.png" alt="Sucesso" class="feedback-image" id="successImage" style="display: none;">
+                <img src="/triste.webp" alt="Triste"
                     class="feedback-image" id="sadImage" style="display: none;">
                 <h3 id="feedbackTitle"></h3>
                 <p id="feedbackMessage"></p>
