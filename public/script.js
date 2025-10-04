@@ -371,10 +371,6 @@ class WeddingInvite {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const weddingInvite = new WeddingInvite();
-});
-
 
 // Enhanced animations and interactions
 class AnimationManager {
