@@ -107,14 +107,12 @@ class WeddingInvite {
         const currentScreenEl = document.querySelector('.screen.active');
         const targetScreenEl = document.getElementById(`${screenName}Screen`);
 
-        // ✅ Proteção contra null
         if (!targetScreenEl) {
             console.warn(`Tela "${screenName}Screen" não encontrada no DOM.`);
             return;
         }
         if (currentScreenEl === targetScreenEl) return;
 
-        // ✅ Proteção extra caso currentScreenEl seja null
         if (currentScreenEl) {
             currentScreenEl.classList.add('exiting');
             currentScreenEl.classList.remove('active');
@@ -124,8 +122,8 @@ class WeddingInvite {
             targetScreenEl.classList.add('active');
             this.currentScreen = screenName;
 
-            // 🎵 Mostrar controle de música apenas nas telas certas
-            if ((screenName === 'info' || screenName === 'rsvp') && !this.isMusicPlaying && !this.musicEnded) {
+            // 🎵 Música só começa na segunda tela (info)
+            if (screenName === 'info' && !this.isMusicPlaying && !this.musicEnded) {
                 if (this.musicControl) {
                     this.musicControl.style.display = 'flex';
                 }
@@ -134,7 +132,6 @@ class WeddingInvite {
                 this.musicControl.style.display = 'none';
             }
 
-            // ✅ Evita erro se currentScreenEl for null
             if (currentScreenEl) {
                 setTimeout(() => currentScreenEl.classList.remove('exiting'), 100);
             }
