@@ -488,7 +488,7 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     z-index: 10000;
@@ -503,6 +503,7 @@ p {
 .feedback-overlay.active {
     opacity: 1;
     pointer-events: all;
+    display: flex;
 }
 
 .feedback-content {
