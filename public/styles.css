@@ -1264,6 +1264,9 @@ p {
 .btn-admin {
   background: none;
   border: none;
+  position: relative;
+  top: -500px;
+  left: 94%;
   color: var(--primary-gold);
   font-size: 1.2rem;
   padding: 0.5rem;
