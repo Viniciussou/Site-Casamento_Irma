@@ -1,0 +1,20 @@
+{
+  "name": "site-convite-casamento",
+  "version": "1.0.0",
+  "description": "This is a code bundle for Site Convite Casamento. The original project is available at https://www.figma.com/design/5YCL7uNxLWG0qtkxXUxLHR/Site-Convite-Casamento.",
+  "main": "api/rsvp.js",
+  "scripts": {
+    "start": "node api/rsvp.js",
+    "dev": "vercel dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0"
+  }
+}

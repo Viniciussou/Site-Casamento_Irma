@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiago & Beatriz - Convite de Casamento</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl" style="display: none;">
+        <button class="music-btn" id="musicToggleBtn">
+            <i class="fas fa-play"></i>
+        </button>
+        <div class="music-info">
+            <span class="music-title">Nossa Música</span>
+            <div class="music-progress">
+                <div class="progress-bar" id="musicProgressBar"></div>
+            </div>
+        </div>
+    </div>
+    <audio id="backgroundMusic" loop>
+        <!-- ATENÇÃO: Substitua 'caminho/para/sua/musica.mp3' pelo URL real do seu arquivo de áudio hospedado -->
+        <source src="assets/Alex Warren - Ordinary (Lyrics) - 7clouds (youtube).mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
+    <!-- Audio for feedback -->
+    <audio id="successSound">
+        <!-- ATENÇÃO: Substitua 'caminho/para/seu/som_vitoria.mp3' pelo URL real do seu arquivo de áudio hospedado -->
+        <source src="assets/Victory Sound Effect - Der Test (youtube).mp3" type="audio/mpeg">
+    </audio>
+    <audio id="failSound">
+        <!-- ATENÇÃO: Substitua 'caminho/para/seu/som_fracasso.mp3' pelo URL real do seu arquivo de áudio hospedado -->
+        <source src="assets/EFEITOS SONOROSFRACASSO#1 - Ƥrox† Br (youtube).mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="wedding-container">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="loading-content">
+                <div class="heart-loader">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <p>Preparando seu convite...</p>
+            </div>
+        </div>
+
+        <div class="vine-background">
+            <!-- Top left vine -->
+            <svg class="vine top-left" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 50 Q150 100 200 180 Q250 260 300 200 Q350 140 380 220" stroke="rgba(96, 165, 250, 0.3)"
+                    stroke-width="3" fill="none" class="vine-path" />
+                <path d="M50 50 Q100 120 180 150 Q260 180 220 250 Q180 320 250 350" stroke="rgba(96, 165, 250, 0.3)"
+                    stroke-width="2" fill="none" opacity="0.7" />
+
+                <!-- Flowers -->
+                <g fill="rgba(59, 130, 246, 0.4)">
+                    <circle cx="150" cy="120" r="8" class="flower flower-1">
+                        <animate attributeName="r" values="6;10;6" dur="3s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="200" cy="180" r="6" class="flower flower-2">
+                        <animate attributeName="r" values="4;8;4" dur="2.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="280" cy="160" r="7" class="flower flower-3">
+                        <animate attributeName="r" values="5;9;5" dur="4s" repeatCount="indefinite" />
+                    </circle>
+                </g>
+
+                <!-- Leaves -->
+                <g fill="rgba(37, 99, 235, 0.2)">
+                    <ellipse cx="120" cy="90" rx="12" ry="6" transform="rotate(45 120 90)" />
+                    <ellipse cx="180" cy="140" rx="10" ry="5" transform="rotate(-30 180 140)" />
+                    <ellipse cx="240" cy="200" rx="14" ry="7" transform="rotate(60 240 200)" />
+                    <ellipse cx="300" cy="180" rx="11" ry="6" transform="rotate(-45 300 180)" />
+                </g>
+            </svg>
+
+            <!-- Top right vine -->
+            <svg class="vine top-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M270 30 Q200 80 150 140 Q100 200 160 260 Q220 320 180 280" stroke="rgba(129, 140, 248, 0.25)"
+                    stroke-width="3" fill="none" />
+                <path d="M270 30 Q220 100 180 120 Q140 140 120 180 Q100 220 140 250" stroke="rgba(129, 140, 248, 0.25)"
+                    stroke-width="2" fill="none" opacity="0.6" />
+
+                <!-- Flowers -->
+                <g fill="rgba(99, 102, 241, 0.35)">
+                    <circle cx="200" cy="100" r="7" class="flower flower-4">
+                        <animate attributeName="r" values="5;9;5" dur="3.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="150" cy="140" r="6" class="flower flower-5">
+                        <animate attributeName="r" values="4;8;4" dur="2.8s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="180" cy="200" r="8" class="flower flower-6">
+                        <animate attributeName="r" values="6;10;6" dur="4.2s" repeatCount="indefinite" />
+                    </circle>
+                </g>
+
+                <!-- Leaves -->
+                <g fill="rgba(67, 56, 202, 0.15)">
+                    <ellipse cx="230" cy="70" rx="10" ry="5" transform="rotate(-60 230 70)" />
+                    <ellipse cx="170" cy="110" rx="12" ry="6" transform="rotate(30 170 110)" />
+                    <ellipse cx="130" cy="170" rx="11" ry="6" transform="rotate(-15 130 170)" />
+                </g>
+            </svg>
+
+            <!-- Bottom left vine -->
+            <svg class="vine bottom-left" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 350 Q100 280 160 260 Q220 240 200 180 Q180 120 240 100 Q300 80 320 140"
+                    stroke="rgba(147, 197, 253, 0.2)" stroke-width="3" fill="none" />
+                <path d="M50 350 Q120 300 180 280 Q240 260 260 200 Q280 140 340 160" stroke="rgba(147, 197, 253, 0.2)"
+                    stroke-width="2" fill="none" opacity="0.5" />
+
+                <!-- Flowers -->
+                <g fill="rgba(96, 165, 250, 0.3)">
+                    <circle cx="120" cy="300" r="9" class="flower flower-7">
+                        <animate attributeName="r" values="7;11;7" dur="3.2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="180" cy="260" r="7" class="flower flower-8">
+                        <animate attributeName="r" values="5;9;5" dur="2.7s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="220" cy="200" r="6" class="flower flower-9">
+                        <animate attributeName="r" values="4;8;4" dur="3.8s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="280" cy="120" r="8" class="flower flower-10">
+                        <animate attributeName="r" values="6;10;6" dur="4.5s" repeatCount="indefinite" />
+                    </circle>
+                </g>
+
+                <!-- Leaves -->
+                <g fill="rgba(59, 130, 246, 0.15)">
+                    <ellipse cx="90" cy="320" rx="13" ry="7" transform="rotate(75 90 320)" />
+                    <ellipse cx="150" cy="280" rx="11" ry="6" transform="rotate(-45 150 280)" />
+                    <ellipse cx="200" cy="240" rx="12" ry="6" transform="rotate(15 200 240)" />
+                    <ellipse cx="250" cy="160" rx="10" ry="5" transform="rotate(-75 250 160)" />
+                </g>
+            </svg>
+
+            <!-- Bottom right vine -->
+            <svg class="vine bottom-right" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M270 290 Q220 240 180 220 Q140 200 120 160 Q100 120 140 80 Q180 40 200 80"
+                    stroke="rgba(196, 181, 253, 0.25)" stroke-width="3" fill="none" />
+                <path d="M270 290 Q200 260 160 240 Q120 220 100 180 Q80 140 120 120" stroke="rgba(196, 181, 253, 0.25)"
+                    stroke-width="2" fill="none" opacity="0.6" />
+
+                <!-- Flowers -->
+                <g fill="rgba(168, 85, 247, 0.35)">
+                    <circle cx="220" cy="260" r="8" class="flower flower-11">
+                        <animate attributeName="r" values="6;10;6" dur="3.6s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="180" cy="220" r="6" class="flower flower-12">
+                        <animate attributeName="r" values="4;8;4" dur="2.9s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="140" cy="180" r="7" class="flower flower-13">
+                        <animate attributeName="r" values="5;9;5" dur="4.1s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="160" cy="100" r="9" class="flower flower-14">
+                        <animate attributeName="r" values="7;11;7" dur="3.3s" repeatCount="indefinite" />
+                    </circle>
+                </g>
+
+                <!-- Leaves -->
+                <g fill="rgba(124, 58, 237, 0.15)">
+                    <ellipse cx="240" cy="270" rx="12" ry="6" transform="rotate(-30 240 270)" />
+                    <ellipse cx="200" cy="240" rx="10" ry="5" transform="rotate(45 200 240)" />
+                    <ellipse cx="160" cy="200" rx="11" ry="6" transform="rotate(-60 160 200)" />
+                    <ellipse cx="130" cy="140" rx="13" ry="7" transform="rotate(20 130 140)" />
+                </g>
+            </svg>
+
+            <!-- Floating petals -->
+            <div class="floating-petals">
+                <div class="petal" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+                <div class="petal" style="left: 25%; top: 80%; animation-delay: 1s;"></div>
+                <div class="petal" style="left: 40%; top: 15%; animation-delay: 2s;"></div>
+                <div class="petal" style="left: 60%; top: 70%; animation-delay: 0.5s;"></div>
+                <div class="petal" style="left: 75%; top: 30%; animation-delay: 1.5s;"></div>
+                <div class="petal" style="left: 85%; top: 90%; animation-delay: 2.5s;"></div>
+                <div class="petal" style="left: 15%; top: 50%; animation-delay: 3s;"></div>
+                <div class="petal" style="left: 55%; top: 5%; animation-delay: 3.5s;"></div>
+                <div class="petal" style="left: 70%; top: 60%; animation-delay: 0.8s;"></div>
+                <div class="petal" style="left: 30%; top: 95%; animation-delay: 1.8s;"></div>
+                <div class="petal" style="left: 90%; top: 45%; animation-delay: 2.8s;"></div>
+                <div class="petal" style="left: 5%; top: 75%; animation-delay: 3.8s;"></div>
+            </div>
+        </div>
+
+        <!-- Screen 1: Welcome -->
+        <div class="screen active" id="welcomeScreen">
+            <div class="screen-content">
+                <div class="welcome-header">
+                    <div class="decorative-line"></div>
+                    <h1 class="welcome-title">Queridos Convidados</h1>
+                    <p class="welcome-subtitle">Vocês estão convidados para uma celebração especial</p>
+                    <div class="decorative-line"></div>
+                </div>
+
+                <div class="envelope-container">
+                    <div class="envelope" id="envelope">
+                        <div class="envelope-flap">
+                            <div class="heart-seal">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                        </div>
+                        <div class="envelope-body">
+                            <div class="letter" id="letter">
+                                <div class="letter-content">
+                                    <h3>Thiago & Beatriz</h3>
+                                    <p>11 de Abril • 18h</p>
+                                    <div class="mini-hearts">
+                                        <i class="fas fa-heart"></i>
+                                        <i class="fas fa-heart"></i>
+                                        <i class="fas fa-heart"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="welcome-actions">
+                    <button class="btn-primary" id="openEnvelope">
+                        <i class="fas fa-heart"></i>
+                        Abrir Convite
+                    </button>
+                    <p class="hint">Clique para revelar os detalhes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Wedding Info -->
+        <div class="screen" id="infoScreen">
+            <div class="screen-content">
+                <button class="btn-back" id="backToWelcome">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="names-section">
+                    <div class="floral-crown">
+                        <i class="fas fa-seedling"></i>
+                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-flower"></i>
+                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h1 class="couple-names">
+                        <span class="name">Thiago</span>
+                        <span class="name">&</span>
+                        <span class="name">Beatriz</span>
+                    </h1>
+                    <div class="decorative-separator">
+                        <div class="line"></div>
+                        <i class="fas fa-heart"></i>
+                        <div class="line"></div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="quote-section">
+                        <div class="quote-mark">"</div>
+                        <p class="quote-text">O amor é a ponte entre duas almas que se encontraram</p>
+                        <div class="quote-mark">"</div>
+                    </div>
+
+                    <div class="event-details">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <h3>Sábado, 11 de abril de 2025</h3>
+                                <p>às 18:00h</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <h3>R. Benedito Rodrigues de Freitas, 84</h3>
+                                <p>Vila Rachid, Guarulhos - SP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-secondary" id="openMaps">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Ver no Mapa
+                        </button>
+                        <button class="btn-next" id="nextToRules">
+                            <div class="btn-next-content">
+                                <div class="btn-arrow">
+                                    <span class="btn-text">Próxima</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </div>
+                            </div>
+                            <div class="btn-next-bg"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Rules -->
+        <div class="screen" id="rulesScreen">
+            <div class="screen-content">
+                <button class="btn-back" id="backToInfo">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="rules-header">
+                    <div class="floral-decoration">
+                        <i class="fas fa-spa"></i>
+                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-seedling"></i>
+                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h2>Orientações Importantes</h2>
+                    <div class="subtitle-separator">
+                        <div class="line"></div>
+                        <span>🌸</span>
+                        <div class="line"></div>
+                    </div>
+                    <p class="rules-subtitle">Para que tudo corra perfeitamente no nosso grande dia</p>
+                </div>
+
+                <div class="rules-container">
+                    <div class="rule-item urgent">
+                        <div class="rule-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Confirmar presença até 09/01/2026</p>
+                            <span class="rule-badge">IMPORTANTE</span>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Deixar celular no silencioso</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Não convidar outras pessoas</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Não dificultar o trabalho dos fotógrafos</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Não se atrasar, seja pontual</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <div class="rule-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Participar da cerimônia</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item special">
+                        <div class="rule-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Não usar branco, é a cor da noiva</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item joy">
+                        <div class="rule-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="rule-content">
+                            <p>Aproveite muito! ♥</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation-footer">
+                    <button class="btn-secondary" id="backToInfoFromRules">
+                        <i class="fas fa-arrow-left"></i>
+                        Voltar
+                    </button>
+                    <button class="btn-next" id="nextToRSVP">
+                        <div class="btn-next-content">
+                            <div class="btn-arrow">
+                                <span class="btn-text">Próxima</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </div>
+                        <div class="btn-next-bg"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 4: RSVP -->
+        <div class="screen" id="rsvpScreen">
+            <div class="screen-content">
+                <button class="btn-back" id="backToRules">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <div class="rsvp-header">
+                    <div class="floral-crown rotating">
+                        <i class="fas fa-seedling"></i>
+                        <i class="fas fa-leaf"></i>
+                        <span>💐</span>
+                        <i class="fas fa-leaf"></i>
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h2>Confirmação de Presença</h2>
+                    <div class="subtitle-separator">
+                        <div class="line"></div>
+                        <i class="fas fa-heart"></i>
+                        <div class="line"></div>
+                    </div>
+                    <p class="rsvp-subtitle">Sua presença é muito importante para nós! ♥</p>
+                </div>
+
+                <div class="rsvp-form-container">
+                    <form id="rsvpForm" class="rsvp-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="guestName">
+                                    <i class="fas fa-user"></i>
+                                    Nome Completo *
+                                </label>
+                                <input type="text" id="guestName" name="name" placeholder="Seu nome completo" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="guestAge">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    Idade
+                                </label>
+                                <input type="number" id="guestAge" name="age" placeholder="Sua idade" min="1" max="120">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guestContact">
+                                <i class="fas fa-envelope"></i>
+                                Email ou Telefone *
+                            </label>
+                            <input type="text" id="guestContact" name="contact"
+                                placeholder="seu.email@exemplo.com ou (11) 99999-9999" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="radio-label">
+                                <i class="fas fa-question-circle"></i>
+                                Vai comparecer? *
+                            </label>
+                            <div class="radio-options">
+                                <label class="radio-option">
+                                    <input type="radio" name="attending" value="sim" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">
+                                        <i class="fas fa-heart"></i>
+                                        Sim, estarei lá!
+                                    </span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="attending" value="nao" required>
+                                    <span class="radio-custom"></span>
+                                    <span class="radio-text">Não posso comparecer</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guestMessage">
+                                <i class="fas fa-comment"></i>
+                                Mensagem / Observações
+                            </label>
+                            <textarea id="guestMessage" name="message"
+                                placeholder="Restrições alimentares, mensagem carinhosa para os noivos, ou qualquer observação especial..."
+                                rows="4"></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="backToRulesFromRSVP">
+                                <i class="fas fa-arrow-left"></i>
+                                Voltar
+                            </button>
+                            <button type="submit" class="btn-primary" id="submitRSVP">
+                                <i class="fas fa-paper-plane"></i>
+                                <span class="btn-text">Enviar Confirmação</span>
+                                <div class="loading-spinner" style="display: none;">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-access">
+                    <button class="btn-admin" id="adminAccess" title="Acesso administrativo">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: Admin -->
+        <div class="screen" id="adminScreen">
+            <div class="screen-content">
+                <div class="admin-header">
+                    <div>
+                        <h2>Painel Administrativo</h2>
+                        <p>Gerenciar confirmações de presença</p>
+                    </div>
+                    <div class="admin-actions">
+                        <button class="btn-secondary" id="exportCSV">
+                            <i class="fas fa-download"></i>
+                            Exportar CSV
+                        </button>
+                        <button class="btn-secondary" id="exitAdmin">
+                            <i class="fas fa-eye-slash"></i>
+                            Sair
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-number" id="totalResponses">0</div>
+                        <div class="stat-label">Total de Respostas</div>
+                    </div>
+                    <div class="stat-card confirmed">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number" id="confirmedCount">0</div>
+                        <div class="stat-label">Confirmados</div>
+                    </div>
+                    <div class="stat-card declined">
+                        <div class="stat-icon">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="stat-number" id="declinedCount">0</div>
+                        <div class="stat-label">Não Comparece</div>
+                    </div>
+                    <div class="stat-card total-people">
+                        <div class="stat-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-number" id="totalPeople">0</div>
+                        <div class="stat-label">Total de Pessoas</div>
+                    </div>
+                </div>
+
+                <div class="admin-table-container">
+                    <div class="table-header">
+                        <h3>Lista de Confirmações</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="rsvp-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Idade</th>
+                                    <th>Contato</th>
+                                    <th>Status</th>
+                                    <th>Acompanhantes</th>
+                                    <th>Mensagem</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rsvpTableBody">
+                                <tr class="no-data">
+                                    <td colspan="7">
+                                        <div class="no-data-content">
+                                            <i class="fas fa-users"></i>
+                                            <h4>Nenhuma confirmação recebida ainda</h4>
+                                            <p>As confirmações aparecerão aqui quando os convidados responderem</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Overlays -->
+        <div class="feedback-overlay" id="successFeedback" style="display: none;">
+            <div class="feedback-content">
+                <!-- ATENÇÃO: Substitua 'images.png' e 'fashionable-flork-meme-hilarious-hipster-260nw-2324370215.webp' pelos URLs reais das suas imagens hospedadas -->
+                <img src="images.png" alt="Sucesso" class="feedback-image" id="successImage" style="display: none;">
+                <img src="fashionable-flork-meme-hilarious-hipster-260nw-2324370215.webp" alt="Triste"
+                    class="feedback-image" id="sadImage" style="display: none;">
+                <h3 id="feedbackTitle"></h3>
+                <p id="feedbackMessage"></p>
+                <button class="btn-elegant" id="closeFeedback">
+                    <i class="fas fa-times-circle"></i> Fechar
+                </button>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
