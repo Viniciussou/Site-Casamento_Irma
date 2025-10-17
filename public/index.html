@@ -532,7 +532,34 @@
             </div>
         </div>
 
-        <!-- Screen 5: Admin -->
+        <!-- Screen 5: Lista de Presentes -->
+        <div class="screen" id="giftScreen">
+            <div class="screen-content">
+                <button class="btn-back" id="backToRSVP">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <h2 class="gift-title">Lista de Presentes 🎁</h2>
+                <p class="gift-subtitle">Escolha um item para levar com carinho</p>
+
+                <div id="giftList" class="gift-list"></div>
+
+                <div class="gift-form">
+                    <input type="text" id="giftName" placeholder="Seu nome" required>
+                    <input type="email" id="giftEmail" placeholder="Seu e-mail" required>
+
+                    <select id="giftColor">
+                        <option value="Branco">Branco</option>
+                        <option value="Cinza">Cinza</option>
+                        <option value="Preto">Preto</option>
+                    </select>
+
+                    <button id="confirmGift" class="btn-primary">Confirmar Presente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 6: Admin -->
         <div class="screen" id="adminScreen">
             <div class="screen-content">
                 <div class="admin-header">

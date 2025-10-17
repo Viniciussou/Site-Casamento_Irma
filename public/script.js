@@ -1,11 +1,13 @@
-// Wedding Invite JavaScript - Pure Vanilla JS
+// Wedding Invite JavaScript - Completo com Tela de Presentes 🎁
 class WeddingInvite {
     constructor() {
         this.currentScreen = 'welcome';
-        this.rsvpData = []; // Dados do backend
+        this.rsvpData = [];
         this.isEnvelopeOpen = false;
         this.isSubmitting = false;
         this.backendUrl = '/api/rsvp';
+        this.giftUrl = '/api/gifts';
+        this.selectedGift = null;
 
         // Elementos de música
         this.backgroundMusic = document.getElementById('backgroundMusic');
@@ -62,8 +64,11 @@ class WeddingInvite {
         document.getElementById('exitAdmin')?.addEventListener('click', () => this.navigateToScreen('rsvp'));
         document.getElementById('exportCSV')?.addEventListener('click', () => this.exportCSV());
         this.closeFeedbackBtn?.addEventListener('click', () => this.hideFeedbackOverlay());
-    }
 
+        // 🎁 Eventos da Tela de Presentes
+        document.getElementById("confirmGift")?.addEventListener("click", () => this.confirmGiftSelection());
+        document.getElementById("backToRSVP")?.addEventListener("click", () => this.navigateToScreen("rsvp"));
+    }
 
     setupMusicPlayer() {
         this.musicToggleBtn?.addEventListener('click', () => this.toggleMusic());
@@ -103,8 +108,6 @@ class WeddingInvite {
 
         setTimeout(() => {
             this.navigateToScreen('info');
-
-            // 🎵 Tocar música após interação do usuário
             if (!this.isMusicPlaying && !this.musicEnded) {
                 this.backgroundMusic.play().then(() => {
                     this.isMusicPlaying = true;
@@ -120,51 +123,17 @@ class WeddingInvite {
     navigateToScreen(screenName) {
         const currentScreenEl = document.querySelector('.screen.active');
         const targetScreenEl = document.getElementById(`${screenName}Screen`);
-
-        if (!targetScreenEl) {
-            console.warn(`Tela "${screenName}Screen" não encontrada no DOM.`);
-            return;
-        }
-        if (currentScreenEl === targetScreenEl) return;
-
+        if (!targetScreenEl) return;
         if (currentScreenEl) {
-            currentScreenEl.classList.add('exiting');
             currentScreenEl.classList.remove('active');
+            currentScreenEl.classList.add('exiting');
         }
 
         setTimeout(() => {
             targetScreenEl.classList.add('active');
             this.currentScreen = screenName;
-
-            // Mostrar controles de música, mas não tentar tocar
-            if (screenName === 'info') {
-                if (this.musicControl) {
-                    this.musicControl.style.display = 'flex';
-                }
-            } else if (this.musicControl) {
-                this.musicControl.style.display = 'none';
-            }
-
-            if (currentScreenEl) {
-                setTimeout(() => currentScreenEl.classList.remove('exiting'), 100);
-            }
-
-            this.animateScreenEntrance(screenName);
+            if (screenName === 'gift') this.loadGifts();
         }, 300);
-    }
-
-    animateScreenEntrance(screenName) {
-        const screen = document.getElementById(`${screenName}Screen`);
-        const animatedElements = screen.querySelectorAll('.info-card, .rule-item, .rsvp-form-container, .stat-card');
-        animatedElements.forEach((el, i) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            setTimeout(() => {
-                el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-            }, i * 100 + 200);
-        });
     }
 
     async handleRSVPSubmit(e) {
@@ -185,13 +154,6 @@ class WeddingInvite {
             return;
         }
 
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneRegex = /^[\d\s\-\(\)]+$/;
-        if (!emailRegex.test(data.contact) && !phoneRegex.test(data.contact)) {
-            this.showToast('Insira um email ou telefone válido', 'error');
-            return;
-        }
-
         this.isSubmitting = true;
         this.updateSubmitButton(true);
 
@@ -201,19 +163,11 @@ class WeddingInvite {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+
             if (!response.ok) throw new Error('Erro ao enviar confirmação.');
-
-            if (this.isMusicPlaying) {
-                this.backgroundMusic.pause();
-                this.isMusicPlaying = false;
-                this.musicEnded = true;
-                this.musicControl && (this.musicControl.style.display = 'none');
-            }
-
             this.showFeedbackOverlay(true, data.attending);
             e.target.reset();
         } catch (error) {
-            console.error(error);
             this.showFeedbackOverlay(false, false);
             this.showToast(error.message || 'Erro ao enviar confirmação.', 'error');
         } finally {
@@ -224,18 +178,17 @@ class WeddingInvite {
 
     updateSubmitButton(isSubmitting) {
         const button = document.getElementById('submitRSVP');
-        const text = button.querySelector('.btn-text');
-        const spinner = button.querySelector('.loading-spinner');
+        const text = button?.querySelector('.btn-text');
+        const spinner = button?.querySelector('.loading-spinner');
+        if (!button || !text || !spinner) return;
         if (isSubmitting) {
             text.style.display = 'none';
             spinner.style.display = 'block';
             button.disabled = true;
-            button.style.opacity = '0.7';
         } else {
             text.style.display = 'block';
             spinner.style.display = 'none';
             button.disabled = false;
-            button.style.opacity = '1';
         }
     }
 
@@ -248,32 +201,19 @@ class WeddingInvite {
     showFeedbackOverlay(isSuccess, attendingStatus) {
         this.successFeedbackOverlay.classList.add('active');
         this.successFeedbackOverlay.style.display = 'flex';
-
         if (isSuccess) {
             if (attendingStatus) {
-                this.successFeedbackOverlay.classList.remove('sad-feedback');
-                this.successFeedbackOverlay.classList.add('success-feedback');
                 this.feedbackTitle.textContent = "Presença Confirmada! 🎉";
                 this.feedbackMessage.textContent = "Mal podemos esperar para celebrar com você!";
-                this.successImage.style.display = 'block';
-                this.sadImage.style.display = 'none';
                 this.successSound?.play();
             } else {
-                this.successFeedbackOverlay.classList.remove('success-feedback');
-                this.successFeedbackOverlay.classList.add('sad-feedback');
                 this.feedbackTitle.textContent = "Que pena! 😔";
                 this.feedbackMessage.textContent = "Sentiremos sua falta em nosso grande dia.";
-                this.successImage.style.display = 'none';
-                this.sadImage.style.display = 'block';
                 this.failSound?.play();
             }
         } else {
-            this.successFeedbackOverlay.classList.remove('success-feedback');
-            this.successFeedbackOverlay.classList.add('sad-feedback');
             this.feedbackTitle.textContent = "Ops! Algo deu errado. 😟";
             this.feedbackMessage.textContent = "Não foi possível enviar sua confirmação.";
-            this.successImage.style.display = 'none';
-            this.sadImage.style.display = 'block';
             this.failSound?.play();
         }
     }
@@ -282,348 +222,163 @@ class WeddingInvite {
         this.successFeedbackOverlay.classList.remove('active');
         setTimeout(() => {
             this.successFeedbackOverlay.style.display = 'none';
-            this.successImage.style.display = 'none';
-            this.sadImage.style.display = 'none';
         }, 500);
-        this.successSound && (this.successSound.pause(), this.successSound.currentTime = 0);
-        this.failSound && (this.failSound.pause(), this.failSound.currentTime = 0);
     }
 
     async loadRSVPDataFromBackend() {
         try {
-            const response = await fetch(`${this.backendUrl}`);
-            if (!response.ok) throw new Error('Erro ao carregar dados do RSVP.');
-            this.rsvpData = (await response.json()).map(item => ({ ...item, createdAt: new Date(item.createdAt) }));
+            const [rsvpRes, giftRes] = await Promise.all([
+                fetch(this.backendUrl),
+                fetch(this.giftUrl)
+            ]);
+
+            this.rsvpData = (await rsvpRes.json()).map(r => ({ ...r, createdAt: new Date(r.createdAt) }));
+            this.giftData = await giftRes.json();
+
             this.updateAdminStats();
             this.renderRSVPTable();
-        } catch (error) {
-            console.error(error);
-            this.showToast('Erro ao carregar dados do admin.', 'error');
+            this.renderGiftTable(this.giftData);
+        } catch {
+            this.showToast('Erro ao carregar dados do admin', 'error');
         }
-    }
-
-    exportCSV() {
-        const headers = ['Nome', 'Idade', 'Contato', 'Comparece', 'Mensagem', 'Data'];
-        const csvContent = [
-            headers.join(','),
-            ...this.rsvpData.map(rsvp => [
-                `"${rsvp.name}"`,
-                rsvp.age || '',
-                `"${rsvp.contact}"`,
-                rsvp.attending ? 'Sim' : 'Não',
-                rsvp.message ? `"${rsvp.message.replace(/"/g, '""')}"` : '',
-                new Date(rsvp.createdAt).toLocaleDateString('pt-BR')
-            ].join(','))
-        ].join('\n');
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'confirmacoes-casamento.csv';
-        link.click();
-        window.URL.revokeObjectURL(url);
-        this.showToast('CSV exportado com sucesso!', 'success');
     }
 
     updateAdminStats() {
         document.getElementById('totalResponses').textContent = this.rsvpData.length;
         document.getElementById('confirmedCount').textContent = this.rsvpData.filter(r => r.attending).length;
         document.getElementById('declinedCount').textContent = this.rsvpData.filter(r => !r.attending).length;
-        document.getElementById('totalPeople').textContent = this.rsvpData.length; // Agora total de respostas apenas
     }
 
     renderRSVPTable() {
         const tbody = document.getElementById('rsvpTableBody');
+        if (!tbody) return;
         if (this.rsvpData.length === 0) {
-            tbody.innerHTML = `<tr class="no-data"><td colspan="6">
-                <div class="no-data-content">
-                    <i class="fas fa-users"></i>
-                    <h4>Nenhuma confirmação recebida ainda</h4>
-                    <p>As confirmações aparecerão aqui quando os convidados responderem</p>
-                </div>
-            </td></tr>`;
+            tbody.innerHTML = "<tr><td colspan='6'>Nenhuma confirmação ainda</td></tr>";
             return;
         }
-
-        tbody.innerHTML = this.rsvpData.map((rsvp, index) => `
-            <tr style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">
+        tbody.innerHTML = this.rsvpData.map(rsvp => `
+            <tr>
                 <td>${rsvp.name}</td>
                 <td>${rsvp.age || '-'}</td>
                 <td>${rsvp.contact}</td>
-                <td><span class="status-badge ${rsvp.attending ? 'confirmed' : 'declined'}">
-                    ${rsvp.attending ? 'Confirmado' : 'Não comparece'}</span></td>
+                <td>${rsvp.attending ? 'Confirmado' : 'Não comparece'}</td>
                 <td>${rsvp.message || '-'}</td>
-                <td>${new Date(rsvp.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</td>
-            </tr>
-        `).join('');
+                <td>${new Date(rsvp.createdAt).toLocaleDateString('pt-BR')}</td>
+            </tr>`).join('');
+    }
+
+    renderGiftTable(gifts) {
+        const section = document.getElementById("giftAdminSection");
+        if (!section) return;
+        section.innerHTML = `
+            <h3>🎁 Presentes Escolhidos</h3>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nome</th><th>E-mail</th><th>Item</th><th>Cor</th><th>Data</th>
+                </tr>
+              </thead>
+              <tbody>
+              ${gifts.flatMap(g =>
+            (g.takenBy || []).map(t => `
+                    <tr>
+                      <td>${t.name}</td>
+                      <td>${t.email}</td>
+                      <td>${g.name}</td>
+                      <td>${t.color}</td>
+                      <td>${new Date(t.date).toLocaleDateString("pt-BR")}</td>
+                    </tr>
+                  `)
+        ).join("") || "<tr><td colspan='5'>Nenhum presente escolhido ainda</td></tr>"
+            }
+              </tbody>
+            </table>`;
+    }
+
+    // 🎁 Sistema de Presentes
+    async loadGifts() {
+        try {
+            const res = await fetch(this.giftUrl);
+            const gifts = await res.json();
+            this.renderGiftList(gifts);
+        } catch {
+            this.showToast("Erro ao carregar presentes", "error");
+        }
+    }
+
+    renderGiftList(gifts) {
+        const giftList = document.getElementById("giftList");
+        giftList.innerHTML = "";
+
+        gifts.forEach(g => {
+            const div = document.createElement("div");
+            div.className = `gift-item ${g.available === 0 ? "disabled" : ""}`;
+            div.innerHTML = `
+                <strong>${g.name}</strong>
+                <p>${g.available > 0 ? `${g.available} disponível(is)` : "Esgotado"}</p>
+                <div class="gift-actions">
+                    <button class="btn-amazon" onclick="window.open('${g.amazon}', '_blank')">Ver na Amazon</button>
+                    <button class="btn-secondary selectGiftBtn" ${g.available === 0 ? "disabled" : ""}>Selecionar</button>
+                </div>
+            `;
+            div.querySelector(".selectGiftBtn")?.addEventListener("click", () => {
+                document.querySelectorAll(".gift-item").forEach(i => i.classList.remove("selected"));
+                div.classList.add("selected");
+                this.selectedGift = g.name;
+            });
+            giftList.appendChild(div);
+        });
+    }
+
+    async confirmGiftSelection() {
+        const name = document.getElementById("giftName").value.trim();
+        const email = document.getElementById("giftEmail").value.trim();
+        const color = document.getElementById("giftColor").value;
+        const item = this.selectedGift;
+
+        if (!name || !email || !item) {
+            return this.showToast("Preencha seu nome, e-mail e selecione um presente.", "error");
+        }
+
+        const response = await fetch(this.giftUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, color, item }),
+        });
+
+        const result = await response.json();
+        this.showToast(result.message, response.ok ? "success" : "error");
+        if (response.ok) this.loadGifts();
     }
 
     showToast(message, type = 'success') {
-        const container = document.getElementById('toastContainer');
+        const container = document.getElementById('toastContainer') || (() => {
+            const div = document.createElement('div');
+            div.id = 'toastContainer';
+            div.style.position = 'fixed';
+            div.style.bottom = '20px';
+            div.style.right = '20px';
+            div.style.zIndex = '9999';
+            document.body.appendChild(div);
+            return div;
+        })();
+
         const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.innerHTML = `<div class="toast-icon"><i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i></div>
-            <div class="toast-message">${message}</div>`;
+        toast.textContent = message;
+        toast.style.background = type === 'success' ? '#22c55e' : '#ef4444';
+        toast.style.color = '#fff';
+        toast.style.padding = '10px 15px';
+        toast.style.marginTop = '10px';
+        toast.style.borderRadius = '8px';
+        toast.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+        toast.style.transition = 'all 0.5s ease';
         container.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 10);
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => container.removeChild(toast), 400); }, 4000);
-    }
-}
 
-
-// Enhanced animations and interactions
-class AnimationManager {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        this.addFloatingElements();
-        this.addScrollAnimations();
-        this.addHoverEffects();
-        this.addPageTransitions();
-    }
-
-    addFloatingElements() {
-        // Add floating hearts on welcome screen
-        const createFloatingHeart = () => {
-            const heart = document.createElement('div');
-            heart.innerHTML = '♥';
-            heart.style.cssText = `
-                position: fixed;
-                left: ${Math.random() * 100}%;
-                top: 100%;
-                color: var(--primary-gold);
-                font-size: ${Math.random() * 1 + 0.5}rem;
-                opacity: 0.6;
-                pointer-events: none;
-                z-index: 1;
-                animation: floatUp ${Math.random() * 3 + 4}s linear infinite;
-            `;
-            document.body.appendChild(heart);
-
-            setTimeout(() => {
-                heart.remove();
-            }, 7000);
-        };
-
-        // Add floating animation
-        if (!document.getElementById('floating-animations')) {
-            const styles = document.createElement('style');
-            styles.id = 'floating-animations';
-            styles.textContent = `
-                @keyframes floatUp {
-                    from {
-                        transform: translateY(0) rotate(0deg);
-                        opacity: 0.6;
-                    }
-                    to {
-                        transform: translateY(-100vh) rotate(360deg);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-
-        // Create hearts periodically on welcome screen
-        setInterval(() => {
-            if (document.getElementById('welcomeScreen').classList.contains('active')) {
-                createFloatingHeart();
-            }
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 500);
         }, 3000);
     }
-
-    addScrollAnimations() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'fadeInUp 0.8s ease-out forwards';
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.rule-item, .detail-item, .stat-card').forEach(el => {
-            observer.observe(el);
-        });
-    }
-
-    addHoverEffects() {
-        // Enhanced hover effects for buttons
-        document.querySelectorAll('.btn-primary, .btn-secondary, .btn-next').forEach(button => {
-            button.addEventListener('mouseenter', () => {
-                button.style.transform = button.style.transform.replace('scale(1)', 'scale(1.05)');
-            });
-
-            button.addEventListener('mouseleave', () => {
-                button.style.transform = button.style.transform.replace('scale(1.05)', 'scale(1)');
-            });
-        });
-
-        // Add sparkle effect on hover for special elements
-        document.querySelectorAll('.couple-names, .heart-seal').forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                this.createSparkles(element);
-            });
-        });
-    }
-
-    addPageTransitions() {
-        // Add smooth page transitions with stagger effect
-        const addStaggerAnimation = (container) => {
-            const elements = container.querySelectorAll('.rule-item, .detail-item, .form-group');
-            elements.forEach((element, index) => {
-                element.style.animationDelay = `${index * 0.1}s`;
-                element.classList.add('stagger-in');
-            });
-        };
-
-        // Monitor screen changes
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    const target = mutation.target;
-                    if (target.classList.contains('active') && target.classList.contains('screen')) {
-                        setTimeout(() => {
-                            addStaggerAnimation(target);
-                        }, 300);
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('.screen').forEach(screen => {
-            observer.observe(screen, { attributes: true });
-        });
-    }
-
-    createSparkles(element) {
-        const rect = element.getBoundingClientRect();
-        const sparkles = [];
-
-        for (let i = 0; i < 5; i++) {
-            const sparkle = document.createElement('div');
-            sparkle.innerHTML = '✨';
-            sparkle.style.cssText = `
-                position: fixed;
-                left: ${rect.left + Math.random() * rect.width}px;
-                top: ${rect.top + Math.random() * rect.height}px;
-                font-size: 1rem;
-                pointer-events: none;
-                z-index: 1000;
-                animation: sparkle 1s ease-out forwards;
-            `;
-            document.body.appendChild(sparkle);
-            sparkles.push(sparkle);
-        }
-
-        // Add sparkle animation
-        if (!document.getElementById('sparkle-animation')) {
-            const styles = document.createElement('style');
-            styles.id = 'sparkle-animation';
-            styles.textContent = `
-                @keyframes sparkle {
-                    0% {
-                        transform: scale(0) rotate(0deg);
-                        opacity: 1;
-                    }
-                    50% {
-                        transform: scale(1) rotate(180deg);
-                        opacity: 1;
-                    }
-                    100% {
-                        transform: scale(0) rotate(360deg);
-                        opacity: 0;
-                    }
-                }
-            `;
-            document.head.appendChild(styles);
-        }
-
-        // Clean up sparkles
-        setTimeout(() => {
-            sparkles.forEach(sparkle => sparkle.remove());
-        }, 1000);
-    }
 }
 
-// Initialize the application when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const weddingInvite = new WeddingInvite();
-    const animationManager = new AnimationManager();
-
-    // Add some additional interactive effects
-    const addInteractiveEffects = () => {
-        // Add typing effect for quotes
-        const quotes = document.querySelectorAll('.quote-text');
-        quotes.forEach(quote => {
-            const text = quote.textContent;
-            quote.textContent = '';
-            let i = 0;
-            const typeWriter = () => {
-                if (i < text.length) {
-                    quote.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(typeWriter, 50);
-                }
-            };
-
-            // Start typing when element becomes visible
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        setTimeout(typeWriter, 500);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            });
-            observer.observe(quote);
-        });
-    };
-
-    addInteractiveEffects();
-});
-
-// Add some utility functions
-const utils = {
-    // Format phone number
-    formatPhone: (phone) => {
-        const cleaned = phone.replace(/\D/g, '');
-        const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
-        if (match) {
-            return `(${match[1]}) ${match[2]}-${match[3]}`;
-        }
-        return phone;
-    },
-
-    // Validate email
-    isValidEmail: (email) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    },
-
-    // Debounce function
-    debounce: (func, wait) => {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-};
-
-// Export for potential future use
-window.WeddingInvite = WeddingInvite;
-window.AnimationManager = AnimationManager;
-window.utils = utils;
+window.addEventListener('DOMContentLoaded', () => new WeddingInvite());
