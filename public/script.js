@@ -53,9 +53,9 @@ class WeddingInvite {
         document.getElementById('openMaps')?.addEventListener('click', () => this.openMaps());
         document.getElementById('backToInfo')?.addEventListener('click', () => this.navigateToScreen('info'));
         document.getElementById('backToInfoFromRules')?.addEventListener('click', () => this.navigateToScreen('info'));
-        document.getElementById('nextToRSVP')?.addEventListener('click', () => this.navigateToScreen('rsvp'));
-        document.getElementById('backToRules')?.addEventListener('click', () => this.navigateToScreen('rules'));
-        document.getElementById('backToRulesFromRSVP')?.addEventListener('click', () => this.navigateToScreen('rules'));
+        document.getElementById("nextToGift")?.addEventListener("click", () => this.navigateToScreen("gift"));
+        document.getElementById("nextToRSVP")?.addEventListener("click", () => this.navigateToScreen("rsvp"));
+        document.getElementById("backToRulesFromGift")?.addEventListener("click", () => this.navigateToScreen("rules"));
         document.getElementById('adminAccess')?.addEventListener('click', () => {
             this.navigateToScreen('admin');
             this.loadRSVPDataFromBackend();

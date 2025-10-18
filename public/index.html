@@ -423,7 +423,34 @@
             </div>
         </div>
 
-        <!-- Screen 4: RSVP -->
+        <!-- Screen 5: Lista de Presentes -->
+        <div class="screen" id="giftScreen">
+            <div class="screen-content">
+                <button class="btn-back" id="backToRSVP">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+
+                <h2 class="gift-title">Lista de Presentes 🎁</h2>
+                <p class="gift-subtitle">Escolha um item para levar com carinho</p>
+
+                <div id="giftList" class="gift-list"></div>
+
+                <div class="gift-form">
+                    <input type="text" id="giftName" placeholder="Seu nome" required>
+                    <input type="email" id="giftEmail" placeholder="Seu e-mail" required>
+
+                    <select id="giftColor">
+                        <option value="Branco">Branco</option>
+                        <option value="Cinza">Cinza</option>
+                        <option value="Preto">Preto</option>
+                    </select>
+
+                    <button id="confirmGift" class="btn-primary">Confirmar Presente</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 5: RSVP -->
         <div class="screen" id="rsvpScreen">
             <div class="screen-content">
                 <button class="btn-back" id="backToRules">
@@ -528,33 +555,6 @@
                     <button class="btn-admin" id="adminAccess" title="Acesso administrativo">
                         <i class="fas fa-eye"></i>
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Screen 5: Lista de Presentes -->
-        <div class="screen" id="giftScreen">
-            <div class="screen-content">
-                <button class="btn-back" id="backToRSVP">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-
-                <h2 class="gift-title">Lista de Presentes 🎁</h2>
-                <p class="gift-subtitle">Escolha um item para levar com carinho</p>
-
-                <div id="giftList" class="gift-list"></div>
-
-                <div class="gift-form">
-                    <input type="text" id="giftName" placeholder="Seu nome" required>
-                    <input type="email" id="giftEmail" placeholder="Seu e-mail" required>
-
-                    <select id="giftColor">
-                        <option value="Branco">Branco</option>
-                        <option value="Cinza">Cinza</option>
-                        <option value="Preto">Preto</option>
-                    </select>
-
-                    <button id="confirmGift" class="btn-primary">Confirmar Presente</button>
                 </div>
             </div>
         </div>
