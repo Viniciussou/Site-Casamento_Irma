@@ -80,7 +80,7 @@ class WeddingInvite {
         document.getElementById("exportCSV")?.addEventListener("click", () => this.exportCSV())
         this.closeFeedbackBtn?.addEventListener("click", () => this.hideFeedbackOverlay())
 
-        document.getElementById("openMoneyGiftModal")?.addEventListener("click", this.selectMoneyGift.bind(this))
+        document.getElementById("openMoneyGiftModal")?.addEventListener("click", () => this.selectMoneyGift())
     }
 
     setupMusicPlayer() {
@@ -612,14 +612,14 @@ class WeddingInvite {
 
             if (!isUnavailable) {
                 const selectBtn = card.querySelector(".btn-select-gift")
-                selectBtn.addEventListener("click", this.selectGift.bind(this, gift))
+                selectBtn.addEventListener("click", () => this.selectGift(gift))
             }
 
             giftList.appendChild(card)
         })
     }
 
-    selectGift = (gift) => {
+    selectGift(gift) {
         const giftList = document.getElementById("giftList");
         const colorSection = document.getElementById("colorSelectionSection");
         const cancelBtn = document.getElementById("cancelColorSelection");
