@@ -2001,6 +2001,15 @@ p {
   gap: clamp(0.375rem, 1vw, 0.5rem);
 }
 
+.form-group legend {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-weight: 500;
+  color: #c0c0c0;;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.375rem, 1vw, 0.5rem);
+}
+
 .form-group label i {
   color: var(--primary-gold);
   font-size: clamp(0.875rem, 2vw, 1rem);
@@ -2027,7 +2036,7 @@ p {
 .radio-label {
   font-size: clamp(0.875rem, 2vw, 1rem);
   font-weight: 500;
-  color: #333;
+  color: #c0c0c0;
   display: flex;
   align-items: center;
   gap: clamp(0.375rem, 1vw, 0.5rem);
