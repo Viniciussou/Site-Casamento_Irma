@@ -80,7 +80,7 @@ class WeddingInvite {
         document.getElementById("exportCSV")?.addEventListener("click", () => this.exportCSV())
         this.closeFeedbackBtn?.addEventListener("click", () => this.hideFeedbackOverlay())
 
-        document.getElementById("openMoneyGiftModal")?.addEventListener("click", () => this.selectMoneyGift())
+        document.getElementById("openMoneyGiftModal")?.addEventListener("click", this.selectMoneyGift.bind(this))
     }
 
     setupMusicPlayer() {
@@ -612,11 +612,85 @@ class WeddingInvite {
 
             if (!isUnavailable) {
                 const selectBtn = card.querySelector(".btn-select-gift")
-                selectBtn.addEventListener("click", () => this.selectGift(gift))
+                selectBtn.addEventListener("click", this.selectGift.bind(this, gift))
             }
 
             giftList.appendChild(card)
         })
+    }
+
+    selectGift = (gift) => {
+        const giftList = document.getElementById("giftList");
+        const colorSection = document.getElementById("colorSelectionSection");
+        const cancelBtn = document.getElementById("cancelColorSelection");
+        const colorButtons = colorSection.querySelectorAll(".color-option");
+
+        if (!colorSection) {
+            console.error("Seção de cores não encontrada.");
+            return;
+        }
+
+        // Mostra a seção de cores e faz scroll até ela
+        colorSection.style.display = "block";
+        colorSection.scrollIntoView({ behavior: "smooth", block: "center" });
+
+        this.showToast(`Presente "${gift.name}" selecionado! Escolha uma cor para continuar.`, "info");
+
+        const handleColorClick = (event) => {
+            colorButtons.forEach((btn) => btn.classList.remove("selected"));
+            event.target.classList.add("selected");
+            const selectedColor = event.target.getAttribute("data-color");
+
+            const giftData = {
+                item: gift.name,
+                giftId: gift._id,
+                color: selectedColor,
+            };
+
+            localStorage.setItem("giftSelection", JSON.stringify(giftData));
+            localStorage.removeItem("moneySelection");
+
+            this.showToast(`"${gift.name}" (${selectedColor}) selecionado!`, "success");
+
+            // Vai direto para o RSVP
+            setTimeout(() => {
+                colorSection.style.display = "none";
+                this.navigateToScreen("rsvp");
+            }, 600);
+
+            // Remove listeners
+            colorButtons.forEach((btn) => btn.removeEventListener("click", handleColorClick));
+        };
+
+        colorButtons.forEach((btn) => btn.addEventListener("click", handleColorClick));
+
+        cancelBtn.addEventListener("click", () => {
+            colorSection.style.display = "none";
+            colorButtons.forEach((btn) => btn.removeEventListener("click", handleColorClick));
+            this.showToast("Seleção de presente cancelada.", "warning");
+        });
+    }
+
+
+    checkGiftSelection() {
+        const indicator = document.getElementById("giftSelectionIndicator")
+        const indicatorText = document.getElementById("giftSelectionText")
+
+        if (!indicator || !indicatorText) return
+
+        const giftSelection = localStorage.getItem("giftSelection")
+        const moneySelection = localStorage.getItem("moneySelection")
+
+        if (giftSelection) {
+            const gift = JSON.parse(giftSelection)
+            indicatorText.innerHTML = `<strong>Presente selecionado:</strong> ${gift.item}`
+            indicator.style.display = "block"
+        } else if (moneySelection) {
+            indicatorText.innerHTML = `<strong>Contribuição em dinheiro selecionada</strong>`
+            indicator.style.display = "block"
+        } else {
+            indicator.style.display = "none"
+        }
     }
 
     // ✅ Função para exibir notificações visuais (toast)
@@ -665,28 +739,6 @@ class WeddingInvite {
         }, 3500)
     }
 
-
-
-    checkGiftSelection() {
-        const indicator = document.getElementById("giftSelectionIndicator")
-        const indicatorText = document.getElementById("giftSelectionText")
-
-        if (!indicator || !indicatorText) return
-
-        const giftSelection = localStorage.getItem("giftSelection")
-        const moneySelection = localStorage.getItem("moneySelection")
-
-        if (giftSelection) {
-            const gift = JSON.parse(giftSelection)
-            indicatorText.innerHTML = `<strong>Presente selecionado:</strong> ${gift.item}`
-            indicator.style.display = "block"
-        } else if (moneySelection) {
-            indicatorText.innerHTML = `<strong>Contribuição em dinheiro selecionada</strong>`
-            indicator.style.display = "block"
-        } else {
-            indicator.style.display = "none"
-        }
-    }
 }
 
 class AnimationManager {
