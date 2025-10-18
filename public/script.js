@@ -456,6 +456,42 @@ class WeddingInvite {
             .join("")
     }
 
+    // ✅ Renderizar tabela de contribuições em dinheiro (painel admin)
+    renderMoneyGiftAdminTable(moneyGifts) {
+        const tbody = document.getElementById("moneyGiftTableBody") || document.getElementById("moneyGiftAdminSection")?.querySelector("tbody")
+        if (!tbody) return
+
+        if (!moneyGifts || moneyGifts.length === 0) {
+            tbody.innerHTML = `
+      <tr class="no-data">
+        <td colspan="4">
+          <div class="no-data-content">
+            <i class="fas fa-coins"></i>
+            <h4>Nenhuma contribuição em dinheiro ainda</h4>
+            <p>As contribuições aparecerão aqui quando forem registradas</p>
+          </div>
+        </td>
+      </tr>
+    `
+            return
+        }
+
+        tbody.innerHTML = moneyGifts
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .map(
+                (item, i) => `
+        <tr style="animation: fadeInUp 0.5s ease-out ${i * 0.1}s both;">
+          <td>${item.name}</td>
+          <td>${item.email}</td>
+          <td>${item.amount ? `R$ ${item.amount}` : "-"}</td>
+          <td>${new Date(item.date).toLocaleDateString("pt-BR")}</td>
+        </tr>
+      `,
+            )
+            .join("")
+    }
+
+
     async loadGifts() {
         const giftList = document.getElementById("giftList")
         if (!giftList) return
@@ -583,57 +619,52 @@ class WeddingInvite {
         })
     }
 
-    selectGift(gift) {
-        const giftList = document.getElementById("giftList");
-        const colorSection = document.getElementById("colorSelectionSection");
-        const cancelBtn = document.getElementById("cancelColorSelection");
-        const colorButtons = colorSection.querySelectorAll(".color-option");
+    // ✅ Função para exibir notificações visuais (toast)
+    showToast(message, type = "info") {
+        const existingToast = document.querySelector(".toast-message")
+        if (existingToast) existingToast.remove()
 
-        if (!colorSection) {
-            console.error("Seção de cores não encontrada.");
-            return;
-        }
+        const toast = document.createElement("div")
+        toast.className = `toast-message toast-${type}`
+        toast.textContent = message
 
-        // Mostra a seção de cores e faz scroll até ela
-        colorSection.style.display = "block";
-        colorSection.scrollIntoView({ behavior: "smooth", block: "center" });
-
-        this.showToast(`Presente "${gift.name}" selecionado! Escolha uma cor para continuar.`, "info");
-
-        const handleColorClick = (event) => {
-            colorButtons.forEach((btn) => btn.classList.remove("selected"));
-            event.target.classList.add("selected");
-            const selectedColor = event.target.getAttribute("data-color");
-
-            const giftData = {
-                item: gift.name,
-                giftId: gift._id,
-                color: selectedColor,
+        // Estilos rápidos embutidos
+        toast.style.cssText = `
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${type === "success"
+                ? "linear-gradient(90deg,#16a34a,#22c55e)"
+                : type === "error"
+                    ? "linear-gradient(90deg,#dc2626,#ef4444)"
+                    : type === "warning"
+                        ? "linear-gradient(90deg,#d97706,#facc15)"
+                        : "linear-gradient(90deg,#2563eb,#3b82f6)"
             };
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-size: 0.95rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: 3000;
+  `
 
-            localStorage.setItem("giftSelection", JSON.stringify(giftData));
-            localStorage.removeItem("moneySelection");
+        document.body.appendChild(toast)
 
-            this.showToast(`"${gift.name}" (${selectedColor}) selecionado!`, "success");
+        // Entrada animada
+        setTimeout(() => (toast.style.opacity = "1"), 100)
 
-            // Vai direto para o RSVP
-            setTimeout(() => {
-                colorSection.style.display = "none";
-                this.navigateToScreen("rsvp");
-            }, 600);
-
-            // Remove listeners
-            colorButtons.forEach((btn) => btn.removeEventListener("click", handleColorClick));
-        };
-
-        colorButtons.forEach((btn) => btn.addEventListener("click", handleColorClick));
-
-        cancelBtn.addEventListener("click", () => {
-            colorSection.style.display = "none";
-            colorButtons.forEach((btn) => btn.removeEventListener("click", handleColorClick));
-            this.showToast("Seleção de presente cancelada.", "warning");
-        });
+        // Saída e remoção
+        setTimeout(() => {
+            toast.style.opacity = "0"
+            setTimeout(() => toast.remove(), 500)
+        }, 3500)
     }
+
 
 
     checkGiftSelection() {
