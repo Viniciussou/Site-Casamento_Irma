@@ -6,7 +6,6 @@ class WeddingInvite {
     this.isEnvelopeOpen = false
     this.isSubmitting = false
     this.backendUrl = "/api/rsvp"
-    this.selectedGift = null
 
     // Elementos de música
     this.backgroundMusic = document.getElementById("backgroundMusic")
@@ -60,7 +59,7 @@ class WeddingInvite {
     // Navegação Rules → Gift List
     document.getElementById("backToInfoFromRules")?.addEventListener("click", () => this.navigateToScreen("info"))
     document.getElementById("nextToGiftList")?.addEventListener("click", () => this.navigateToScreen("gift"))
-
+    document.getElementById("backToGiftListFromRSVP")?.addEventListener("click", () => this.navigateToScreen("gift"))
     // Navegação Gift List → RSVP
     document.getElementById("backToRulesFromGiftList")?.addEventListener("click", () => this.navigateToScreen("rules"))
     document
@@ -80,15 +79,8 @@ class WeddingInvite {
     document.getElementById("exitAdmin")?.addEventListener("click", () => this.navigateToScreen("rsvp"))
     document.getElementById("exportCSV")?.addEventListener("click", () => this.exportCSV())
     this.closeFeedbackBtn?.addEventListener("click", () => this.hideFeedbackOverlay())
-    document.getElementById("confirmGift")?.addEventListener("click", () => this.confirmGiftSelection())
-    document.getElementById("backToRSVP")?.addEventListener("click", () => this.navigateToScreen("rsvp"))
 
-    // Gift modal event listeners
-    document.getElementById("closeGiftModal")?.addEventListener("click", () => this.closeGiftModal())
-    document.getElementById("cancelGiftBtn")?.addEventListener("click", () => this.closeGiftModal())
-    document.getElementById("giftForm")?.addEventListener("submit", (e) => this.handleGiftSubmit(e))
-
-    document.getElementById("openMoneyGiftModal")?.addEventListener("click", () => this.openMoneyGiftModal())
+    document.getElementById("openMoneyGiftModal")?.addEventListener("click", () => this.selectMoneyGift())
   }
 
   setupMusicPlayer() {
@@ -173,6 +165,7 @@ class WeddingInvite {
     }, 300)
 
     if (screenName === "gift") this.loadGifts() // Auto carregar lista ao abrir tela de presentes
+    if (screenName === "rsvp") this.checkGiftSelection()
   }
 
   animateScreenEntrance(screenName) {
@@ -198,12 +191,18 @@ class WeddingInvite {
     if (this.isSubmitting) return
 
     const formData = new FormData(e.target)
+
+    const giftSelection = localStorage.getItem("giftSelection")
+    const moneySelection = localStorage.getItem("moneySelection")
+
     const data = {
       name: formData.get("name")?.trim(),
       age: formData.get("age") ? Number.parseInt(formData.get("age")) : null,
       contact: formData.get("contact")?.trim(),
       attending: formData.get("attending") === "sim",
       message: formData.get("message")?.trim() || "",
+      gift: giftSelection ? JSON.parse(giftSelection) : null,
+      moneyContribution: moneySelection ? JSON.parse(moneySelection) : null,
     }
 
     if (!data.name || !data.contact || !formData.get("attending")) {
@@ -212,7 +211,7 @@ class WeddingInvite {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const phoneRegex = /^[\d\s\-$$$$]+$/
+    const phoneRegex = /^[\d\s\-()]+$/
     if (!emailRegex.test(data.contact) && !phoneRegex.test(data.contact)) {
       this.showToast("Insira um email ou telefone válido", "error")
       return
@@ -236,8 +235,13 @@ class WeddingInvite {
         if (this.musicControl) this.musicControl.style.display = "none"
       }
 
+      localStorage.removeItem("giftSelection")
+      localStorage.removeItem("moneySelection")
+
       this.showFeedbackOverlay(true, data.attending)
       e.target.reset()
+      const indicator = document.getElementById("giftSelectionIndicator")
+      if (indicator) indicator.style.display = "none"
     } catch (error) {
       console.error(error)
       this.showFeedbackOverlay(false, false)
@@ -323,6 +327,12 @@ class WeddingInvite {
       if (giftResponse.ok) {
         const gifts = await giftResponse.json()
         this.renderGiftAdminTable(gifts)
+      }
+
+      const moneyResponse = await fetch("/api/money-gifts")
+      if (moneyResponse.ok) {
+        const moneyGifts = await moneyResponse.json()
+        this.renderMoneyGiftAdminTable(moneyGifts)
       }
     } catch (error) {
       console.error(error)
@@ -496,7 +506,6 @@ class WeddingInvite {
       card.className = `gift-card ${isUnavailable ? "unavailable" : ""}`
       card.style.animationDelay = `${index * 0.1}s`
 
-      // Icon mapping for different gift types
       const iconMap = {
         copos: "fa-glass-whiskey",
         taças: "fa-wine-glass",
@@ -568,194 +577,66 @@ class WeddingInvite {
 
       if (!isUnavailable) {
         const selectBtn = card.querySelector(".btn-select-gift")
-        selectBtn.addEventListener("click", () => this.openGiftModal(gift))
+        selectBtn.addEventListener("click", () => this.selectGift(gift))
       }
 
       giftList.appendChild(card)
     })
   }
 
-  openGiftModal(gift) {
-    this.selectedGift = gift
-    const modal = document.getElementById("giftModal")
-    const giftNameEl = document.getElementById("selectedGiftName")
-
-    if (modal && giftNameEl) {
-      giftNameEl.textContent = gift.name
-      modal.style.display = "flex"
-      document.body.style.overflow = "hidden"
-    }
-  }
-
-  closeGiftModal() {
-    const modal = document.getElementById("giftModal")
-    const form = document.getElementById("giftForm")
-
-    if (modal) {
-      modal.style.display = "none"
-      document.body.style.overflow = "auto"
+  selectGift(gift) {
+    const giftData = {
+      item: gift.name,
+      giftId: gift._id,
     }
 
-    if (form) {
-      form.reset()
-    }
+    localStorage.setItem("giftSelection", JSON.stringify(giftData))
+    localStorage.removeItem("moneySelection") // Clear money selection if exists
 
-    this.selectedGift = null
-  }
+    this.showToast(`Presente "${gift.name}" selecionado! Complete seu cadastro.`, "success")
 
-  async handleGiftSubmit(e) {
-    e.preventDefault()
-
-    if (!this.selectedGift) {
-      this.showToast("Nenhum presente selecionado", "error")
-      return
-    }
-
-    const formData = new FormData(e.target)
-    const data = {
-      name: formData.get("name")?.trim(),
-      email: formData.get("email")?.trim(),
-      color: formData.get("color") || "Sem preferência",
-      item: this.selectedGift.name,
-    }
-
-    if (!data.name || !data.email) {
-      this.showToast("Por favor, preencha todos os campos obrigatórios", "error")
-      return
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(data.email)) {
-      this.showToast("Por favor, insira um email válido", "error")
-      return
-    }
-
-    const submitBtn = document.getElementById("confirmGiftBtn")
-    const btnText = submitBtn.querySelector(".btn-text")
-    const spinner = submitBtn.querySelector(".loading-spinner")
-
-    submitBtn.disabled = true
-    btnText.style.display = "none"
-    spinner.style.display = "block"
-
-    try {
-      const response = await fetch("/api/gifts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        this.showToast("Presente reservado com sucesso! 🎁", "success")
-        this.closeGiftModal()
-        this.loadGifts() // Reload gift list
-      } else {
-        this.showToast(result.message || "Erro ao reservar presente", "error")
-      }
-    } catch (error) {
-      console.error(error)
-      this.showToast("Erro ao processar sua solicitação", "error")
-    } finally {
-      submitBtn.disabled = false
-      btnText.style.display = "block"
-      spinner.style.display = "none"
-    }
-  }
-
-  openMoneyGiftModal() {
-    // Create modal if it doesn't exist
-    let modal = document.getElementById("moneyGiftModal")
-
-    if (!modal) {
-      modal = document.createElement("div")
-      modal.id = "moneyGiftModal"
-      modal.className = "money-gift-modal"
-      modal.innerHTML = `
-        <div class="money-modal-content">
-          <button class="modal-close" id="closeMoneyGiftModal">
-            <i class="fas fa-times"></i>
-          </button>
-          
-          <div class="money-modal-header">
-            <i class="fas fa-hand-holding-usd"></i>
-            <h3>Contribuição em Dinheiro</h3>
-            <p>Sua generosidade nos ajudará a começar nossa nova vida juntos!</p>
-          </div>
-
-          <div class="pix-info">
-            <h4>
-              <i class="fab fa-pix"></i>
-              Chave PIX
-            </h4>
-            <div class="pix-key" id="pixKey">seu-email@exemplo.com</div>
-            <button class="btn-copy-pix" id="copyPixBtn">
-              <i class="fas fa-copy"></i>
-              Copiar Chave PIX
-            </button>
-          </div>
-
-          <div class="modal-actions">
-            <button type="button" class="btn-secondary" id="closeMoneyModalBtn">
-              <i class="fas fa-times"></i> Fechar
-            </button>
-          </div>
-        </div>
-      `
-      document.body.appendChild(modal)
-
-      // Add event listeners
-      document.getElementById("closeMoneyGiftModal")?.addEventListener("click", () => this.closeMoneyGiftModal())
-      document.getElementById("closeMoneyModalBtn")?.addEventListener("click", () => this.closeMoneyGiftModal())
-      document.getElementById("copyPixBtn")?.addEventListener("click", () => this.copyPixKey())
-    }
-
-    modal.classList.add("active")
-    document.body.style.overflow = "hidden"
-  }
-
-  closeMoneyGiftModal() {
-    const modal = document.getElementById("moneyGiftModal")
-    if (modal) {
-      modal.classList.remove("active")
-      document.body.style.overflow = "auto"
-    }
-  }
-
-  copyPixKey() {
-    const pixKey = document.getElementById("pixKey")?.textContent
-    if (pixKey) {
-      navigator.clipboard
-        .writeText(pixKey)
-        .then(() => {
-          this.showToast("Chave PIX copiada com sucesso!", "success")
-        })
-        .catch(() => {
-          this.showToast("Erro ao copiar chave PIX", "error")
-        })
-    }
-  }
-
-  showToast(message, type = "success") {
-    const container = document.getElementById("toastContainer")
-    if (!container) return
-    const toast = document.createElement("div")
-    toast.className = `toast ${type}`
-    toast.innerHTML = `
-            <div class="toast-icon"><i class="fas ${type === "success" ? "fa-check-circle" : "fa-exclamation-circle"}"></i></div>
-            <div class="toast-message">${message}</div>
-        `
-    container.appendChild(toast)
-    setTimeout(() => toast.classList.add("show"), 10)
     setTimeout(() => {
-      toast.classList.remove("show")
-      setTimeout(() => container.removeChild(toast), 400)
-    }, 4000)
+      this.navigateToScreen("rsvp")
+    }, 500)
+  }
+
+  selectMoneyGift() {
+    const moneyData = {
+      type: "money",
+    }
+
+    localStorage.setItem("moneySelection", JSON.stringify(moneyData))
+    localStorage.removeItem("giftSelection") // Clear gift selection if exists
+
+    this.showToast("Contribuição em dinheiro selecionada! Complete seu cadastro.", "success")
+
+    setTimeout(() => {
+      this.navigateToScreen("rsvp")
+    }, 500)
+  }
+
+  checkGiftSelection() {
+    const indicator = document.getElementById("giftSelectionIndicator")
+    const indicatorText = document.getElementById("giftSelectionText")
+
+    if (!indicator || !indicatorText) return
+
+    const giftSelection = localStorage.getItem("giftSelection")
+    const moneySelection = localStorage.getItem("moneySelection")
+
+    if (giftSelection) {
+      const gift = JSON.parse(giftSelection)
+      indicatorText.innerHTML = `<strong>Presente selecionado:</strong> ${gift.item}`
+      indicator.style.display = "block"
+    } else if (moneySelection) {
+      indicatorText.innerHTML = `<strong>Contribuição em dinheiro selecionada</strong>`
+      indicator.style.display = "block"
+    } else {
+      indicator.style.display = "none"
+    }
   }
 }
 
-// Enhanced animations and interactions
 class AnimationManager {
   constructor() {
     this.init()
@@ -769,7 +650,6 @@ class AnimationManager {
   }
 
   addFloatingElements() {
-    // Add floating hearts on welcome screen
     const createFloatingHeart = () => {
       const heart = document.createElement("div")
       heart.innerHTML = "♥"
@@ -791,7 +671,6 @@ class AnimationManager {
       }, 7000)
     }
 
-    // Add floating animation
     if (!document.getElementById("floating-animations")) {
       const styles = document.createElement("style")
       styles.id = "floating-animations"
@@ -810,7 +689,6 @@ class AnimationManager {
       document.head.appendChild(styles)
     }
 
-    // Create hearts periodically on welcome screen
     setInterval(() => {
       if (document.getElementById("welcomeScreen").classList.contains("active")) {
         createFloatingHeart()
@@ -832,14 +710,12 @@ class AnimationManager {
       })
     }, observerOptions)
 
-    // Observe elements for animation
     document.querySelectorAll(".rule-item, .detail-item, .stat-card").forEach((el) => {
       observer.observe(el)
     })
   }
 
   addHoverEffects() {
-    // Enhanced hover effects for buttons
     document.querySelectorAll(".btn-primary, .btn-secondary, .btn-next").forEach((button) => {
       button.addEventListener("mouseenter", () => {
         button.style.transform = button.style.transform.replace("scale(1)", "scale(1.05)")
@@ -850,7 +726,6 @@ class AnimationManager {
       })
     })
 
-    // Add sparkle effect on hover for special elements
     document.querySelectorAll(".couple-names, .heart-seal").forEach((element) => {
       element.addEventListener("mouseenter", () => {
         this.createSparkles(element)
@@ -859,7 +734,6 @@ class AnimationManager {
   }
 
   addPageTransitions() {
-    // Add smooth page transitions with stagger effect
     const addStaggerAnimation = (container) => {
       const elements = container.querySelectorAll(".rule-item, .detail-item, .form-group")
       elements.forEach((element, index) => {
@@ -868,7 +742,6 @@ class AnimationManager {
       })
     }
 
-    // Monitor screen changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "attributes" && mutation.attributeName === "class") {
@@ -907,7 +780,6 @@ class AnimationManager {
       sparkles.push(sparkle)
     }
 
-    // Add sparkle animation
     if (!document.getElementById("sparkle-animation")) {
       const styles = document.createElement("style")
       styles.id = "sparkle-animation"
@@ -930,21 +802,17 @@ class AnimationManager {
       document.head.appendChild(styles)
     }
 
-    // Clean up sparkles
     setTimeout(() => {
       sparkles.forEach((sparkle) => sparkle.remove())
     }, 1000)
   }
 }
 
-// Initialize the application when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
   const weddingInvite = new WeddingInvite()
   const animationManager = new AnimationManager()
 
-  // Add some additional interactive effects
   const addInteractiveEffects = () => {
-    // Add typing effect for quotes
     const quotes = document.querySelectorAll(".quote-text")
     quotes.forEach((quote) => {
       const text = quote.textContent
@@ -958,7 +826,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Start typing when element becomes visible
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -974,9 +841,7 @@ document.addEventListener("DOMContentLoaded", () => {
   addInteractiveEffects()
 })
 
-// Add some utility functions
 const utils = {
-  // Format phone number
   formatPhone: (phone) => {
     const cleaned = phone.replace(/\D/g, "")
     const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/)
@@ -986,13 +851,11 @@ const utils = {
     return phone
   },
 
-  // Validate email
   isValidEmail: (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return re.test(email)
   },
 
-  // Debounce function
   debounce: (func, wait) => {
     let timeout
     return function executedFunction(...args) {
@@ -1006,7 +869,6 @@ const utils = {
   },
 }
 
-// Export for potential future use
 window.WeddingInvite = WeddingInvite
 window.AnimationManager = AnimationManager
 window.utils = utils
