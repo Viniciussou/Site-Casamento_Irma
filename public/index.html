@@ -423,41 +423,40 @@
             </div>
         </div>
 
-        <!-- Screen 5: Lista de Presentes -->
+        <!-- Gift List Screen -->
         <div class="screen" id="giftScreen">
             <div class="screen-content">
-                <button class="btn-back" id="backToRSVP">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
+                <h2 class="screen-title">Lista de Presentes 🎁</h2>
 
-                <h2 class="gift-title">Lista de Presentes 🎁</h2>
-                <p class="gift-subtitle">Escolha um item para levar com carinho</p>
-
-                <div id="giftList" class="gift-list"></div>
+                <div class="gift-list" id="giftList"></div>
 
                 <div class="gift-form">
-                    <input type="text" id="giftName" placeholder="Seu nome" required>
-                    <input type="email" id="giftEmail" placeholder="Seu e-mail" required>
-
+                    <input type="text" id="giftName" placeholder="Seu nome" />
+                    <input type="email" id="giftEmail" placeholder="Seu e-mail" />
                     <select id="giftColor">
+                        <option value="">Escolha a cor</option>
                         <option value="Branco">Branco</option>
                         <option value="Cinza">Cinza</option>
                         <option value="Preto">Preto</option>
                     </select>
+                    <button id="confirmGift" class="btn-elegant">Confirmar Presente</button>
+                </div>
 
-                    <button id="confirmGift" class="btn-primary">Confirmar Presente</button>
+                <div class="gift-actions">
+                    <button id="backToRules" class="btn-elegant">Voltar</button>
+                    <button id="nextToRSVP" class="btn-elegant">Continuar</button>
                 </div>
             </div>
         </div>
 
-        <!-- Screen 5: RSVP -->
+        <!-- RSVP Screen -->
         <div class="screen" id="rsvpScreen">
             <div class="screen-content">
-                <button class="btn-back" id="backToRules">
+                <button class="btn-back" id="backToRulesFromRSVP" aria-label="Voltar">
                     <i class="fas fa-arrow-left"></i>
                 </button>
 
-                <div class="rsvp-header">
+                <header class="rsvp-header">
                     <div class="floral-crown rotating">
                         <i class="fas fa-seedling"></i>
                         <i class="fas fa-leaf"></i>
@@ -472,148 +471,109 @@
                         <div class="line"></div>
                     </div>
                     <p class="rsvp-subtitle">Sua presença é muito importante para nós! ♥</p>
-                </div>
+                </header>
 
-                <div class="rsvp-form-container">
-                    <form id="rsvpForm" class="rsvp-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="guestName">
-                                    <i class="fas fa-user"></i>
-                                    Nome Completo *
-                                </label>
-                                <input type="text" id="guestName" name="name" placeholder="Seu nome completo" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="guestAge">
-                                    <i class="fas fa-birthday-cake"></i>
-                                    Idade
-                                </label>
-                                <input type="number" id="guestAge" name="age" placeholder="Sua idade" min="1" max="120">
-                            </div>
-                        </div>
-
+                <form id="rsvpForm" class="rsvp-form">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="guestContact">
-                                <i class="fas fa-envelope"></i>
-                                Email ou Telefone *
-                            </label>
-                            <input type="text" id="guestContact" name="contact"
-                                placeholder="seu.email@exemplo.com ou (11) 99999-9999" required>
+                            <label for="guestName"><i class="fas fa-user"></i> Nome Completo *</label>
+                            <input type="text" id="guestName" name="name" placeholder="Seu nome completo" required>
                         </div>
-
                         <div class="form-group">
-                            <label class="radio-label">
-                                <i class="fas fa-question-circle"></i>
-                                Vai comparecer? *
+                            <label for="guestAge"><i class="fas fa-birthday-cake"></i> Idade</label>
+                            <input type="number" id="guestAge" name="age" placeholder="Sua idade" min="1" max="120">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guestContact"><i class="fas fa-envelope"></i> Email ou Telefone *</label>
+                        <input type="text" id="guestContact" name="contact"
+                            placeholder="seu.email@exemplo.com ou (11) 99999-9999" required>
+                    </div>
+
+                    <fieldset class="form-group">
+                        <legend><i class="fas fa-question-circle"></i> Vai comparecer? *</legend>
+                        <div class="radio-options">
+                            <label class="radio-option">
+                                <input type="radio" name="attending" value="sim" required>
+                                <span class="radio-custom"></span>
+                                <span class="radio-text"><i class="fas fa-heart"></i> Sim, estarei lá!</span>
                             </label>
-                            <div class="radio-options">
-                                <label class="radio-option">
-                                    <input type="radio" name="attending" value="sim" required>
-                                    <span class="radio-custom"></span>
-                                    <span class="radio-text">
-                                        <i class="fas fa-heart"></i>
-                                        Sim, estarei lá!
-                                    </span>
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="attending" value="nao" required>
-                                    <span class="radio-custom"></span>
-                                    <span class="radio-text">Não posso comparecer</span>
-                                </label>
+                            <label class="radio-option">
+                                <input type="radio" name="attending" value="nao" required>
+                                <span class="radio-custom"></span>
+                                <span class="radio-text">Não posso comparecer</span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <label for="guestMessage"><i class="fas fa-comment"></i> Mensagem / Observações</label>
+                        <textarea id="guestMessage" name="message"
+                            placeholder="Restrições alimentares, mensagem carinhosa ou observações especiais..."
+                            rows="4"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="backToRulesFromRSVP">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </button>
+                        <button type="submit" class="btn-primary" id="submitRSVP">
+                            <i class="fas fa-paper-plane"></i>
+                            <span class="btn-text">Enviar Confirmação</span>
+                            <div class="loading-spinner" style="display: none;">
+                                <i class="fas fa-spinner fa-spin"></i>
                             </div>
-                        </div>
+                        </button>
+                    </div>
+                </form>
 
-                        <div class="form-group">
-                            <label for="guestMessage">
-                                <i class="fas fa-comment"></i>
-                                Mensagem / Observações
-                            </label>
-                            <textarea id="guestMessage" name="message"
-                                placeholder="Restrições alimentares, mensagem carinhosa para os noivos, ou qualquer observação especial..."
-                                rows="4"></textarea>
-                        </div>
-
-                        <div class="form-actions">
-                            <button type="button" class="btn-secondary" id="backToRulesFromRSVP">
-                                <i class="fas fa-arrow-left"></i>
-                                Voltar
-                            </button>
-                            <button type="submit" class="btn-primary" id="submitRSVP">
-                                <i class="fas fa-paper-plane"></i>
-                                <span class="btn-text">Enviar Confirmação</span>
-                                <div class="loading-spinner" style="display: none;">
-                                    <i class="fas fa-spinner fa-spin"></i>
-                                </div>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="admin-access">
-                    <button class="btn-admin" id="adminAccess" title="Acesso administrativo">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
+                <button class="btn-admin" id="adminAccess" title="Acesso administrativo">
+                    <i class="fas fa-eye"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Screen 6: Admin -->
-        <div class="screen" id="adminScreen">
+        <!-- Screen: Admin -->
+        <section class="screen" id="adminScreen">
             <div class="screen-content">
-                <div class="admin-header">
+                <header class="admin-header">
                     <div>
                         <h2>Painel Administrativo</h2>
                         <p>Gerenciar confirmações de presença</p>
                     </div>
                     <div class="admin-actions">
-                        <button class="btn-secondary" id="exportCSV">
-                            <i class="fas fa-download"></i>
-                            Exportar CSV
-                        </button>
-                        <button class="btn-secondary" id="exitAdmin">
-                            <i class="fas fa-eye-slash"></i>
-                            Sair
-                        </button>
+                        <button class="btn-secondary" id="exportCSV"><i class="fas fa-download"></i> Exportar
+                            CSV</button>
+                        <button class="btn-secondary" id="exitAdmin"><i class="fas fa-eye-slash"></i> Sair</button>
                     </div>
-                </div>
+                </header>
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
                         <div class="stat-number" id="totalResponses">0</div>
                         <div class="stat-label">Total de Respostas</div>
                     </div>
                     <div class="stat-card confirmed">
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
                         <div class="stat-number" id="confirmedCount">0</div>
                         <div class="stat-label">Confirmados</div>
                     </div>
                     <div class="stat-card declined">
-                        <div class="stat-icon">
-                            <i class="fas fa-times-circle"></i>
-                        </div>
+                        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
                         <div class="stat-number" id="declinedCount">0</div>
                         <div class="stat-label">Não Comparece</div>
                     </div>
                     <div class="stat-card total-people">
-                        <div class="stat-icon">
-                            <i class="fas fa-heart"></i>
-                        </div>
+                        <div class="stat-icon"><i class="fas fa-heart"></i></div>
                         <div class="stat-number" id="totalPeople">0</div>
                         <div class="stat-label">Total de Pessoas</div>
                     </div>
                 </div>
 
-                <div class="admin-table-container">
-                    <div class="table-header">
-                        <h3>Lista de Confirmações</h3>
-                    </div>
+                <section class="admin-table-container">
+                    <h3>Lista de Confirmações</h3>
                     <div class="table-wrapper">
                         <table class="rsvp-table">
                             <thead>
@@ -628,7 +588,7 @@
                             </thead>
                             <tbody id="rsvpTableBody">
                                 <tr class="no-data">
-                                    <td colspan="7">
+                                    <td colspan="6">
                                         <div class="no-data-content">
                                             <i class="fas fa-users"></i>
                                             <h4>Nenhuma confirmação recebida ainda</h4>
@@ -639,10 +599,9 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </section>
             </div>
-        </div>
-
+        </section>
 
         <!-- Feedback Overlays -->
         <div class="feedback-overlay" id="successFeedback" style="display: none;">

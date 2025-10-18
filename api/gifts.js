@@ -17,6 +17,55 @@ async function connectToDatabase() {
   return { client, db };
 }
 
+// 🎁 Lista de presentes iniciais (usada para popular o banco se estiver vazio)
+const initialGifts = [
+  {"name": "Jogo de copos", "available": 1},
+  {"name": "Jogo de taças para sobremesa", "available": 1},
+  {"name": "Jogo de panelas", "available": 1},
+  {"name": "Jogo de taças", "available": 1},
+  {"name": "Forninho elétrico", "available": 1},
+  {"name": "Panela elétrica de arroz", "available": 1},
+  {"name": "Máquina de lavar", "available": 1},
+  {"name": "Jogo de talheres", "available": 3},
+  {"name": "Jogo de prato", "available": 1},
+  {"name": "Jogo de lençol", "available": 1},
+  {"name": "Cobertor", "available": 1},
+  {"name": "Aspirador", "available": 1},
+  {"name": "Mix 3 em 1", "available": 1},
+  {"name": "Torradeira", "available": 1},
+  {"name": "Jogo de toalhas", "available": 1},
+  {"name": "Jogo de potes", "available": 6},
+  {"name": "Jogo de facas", "available": 1},
+  {"name": "Chaleira elétrica", "available": 1},
+  {"name": "Geladeira", "available": 1},
+  {"name": "Cortinas", "available": 1},
+  {"name": "Almofadas de decoração", "available": 1},
+  {"name": "Colcha de cama", "available": 6},
+  {"name": "Aparelho de jantar", "available": 2},
+  {"name": "Tábua de corta carne de madeira", "available": 1},
+  {"name": "Jarras", "available": 1},
+  {"name": "Expredor de laranja", "available": 1},
+  {"name": "Escorredor de louça", "available": 1},
+  {"name": "Cesto de roupas", "available": 1},
+  {"name": "Varal de apartamento", "available": 1},
+  {"name": "Fogão", "available": 1},
+  {"name": "Tábua de passar roupa", "available": 1},
+  {"name": "Toalha", "available": 1},
+  {"name": "Jogo de lençol", "available": 1},
+  {"name": "Cobertor", "available": 1},
+  {"name": "Colcha de cama", "available": 1},
+  {"name": "Jogo de potes", "available": 1},
+  {"name": "Jogo de panela", "available": 1},
+  {"name": "Aparelho de jantar", "available": 1},
+  {"name": "Jogo de copos", "available": 1},
+  {"name": "Jogo de taças", "available": 1},
+  {"name": "Jogo de talheres", "available": 1},
+  {"name": "Jogo de taças de sobremesa", "available": 1},
+  {"name": "Jogo de formas", "available": 1},
+  {"name": "Sanduícheira", "available": 1},
+  {"name": "Jogo de xícaras", "available": 1}
+];
+
 function getRequestBody(req) {
   return new Promise((resolve, reject) => {
     let body = "";
@@ -34,6 +83,12 @@ function getRequestBody(req) {
 module.exports = async function handler(req, res) {
   const { db } = await connectToDatabase();
   const giftsCollection = db.collection("gifts");
+
+  // 🔄 Popular banco automaticamente se estiver vazio
+  const existingCount = await giftsCollection.countDocuments();
+  if (existingCount === 0) {
+    await giftsCollection.insertMany(initialGifts.map(g => ({ ...g, takenBy: [] })));
+  }
 
   if (req.method === "GET") {
     const gifts = await giftsCollection.find({}).toArray();

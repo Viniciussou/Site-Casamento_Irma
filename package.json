@@ -4,8 +4,8 @@
   "description": "This is a code bundle for Site Convite Casamento. The original project is available at https://www.figma.com/design/5YCL7uNxLWG0qtkxXUxLHR/Site-Convite-Casamento.",
   "main": "api/rsvp.js",
   "scripts": {
-    "start": "node api/rsvp.js",
-    "dev": "node api/rsvp.js"
+  "start": "live-server public",
+  "dev": "node api/rsvp.js"
   },
   "keywords": [],
   "author": "",
