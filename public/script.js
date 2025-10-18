@@ -585,35 +585,49 @@ class WeddingInvite {
   }
 
   selectGift(gift) {
+  const colorModal = document.getElementById("colorModal");
+  const cancelBtn = document.getElementById("cancelColorSelection");
+
+  if (!colorModal) {
+    console.error("Modal de cor não encontrado no HTML.");
+    return;
+  }
+
+  colorModal.style.display = "flex";
+
+  const colorButtons = colorModal.querySelectorAll(".color-option");
+
+  const handleColorSelection = (event) => {
+    const selectedColor = event.target.getAttribute("data-color");
+
     const giftData = {
       item: gift.name,
       giftId: gift._id,
-    }
+      color: selectedColor,
+    };
 
-    localStorage.setItem("giftSelection", JSON.stringify(giftData))
-    localStorage.removeItem("moneySelection") // Clear money selection if exists
+    localStorage.setItem("giftSelection", JSON.stringify(giftData));
+    localStorage.removeItem("moneySelection");
 
-    this.showToast(`Presente "${gift.name}" selecionado! Complete seu cadastro.`, "success")
+    this.showToast(`Presente "${gift.name}" selecionado (${selectedColor}). Complete seu cadastro.`, "success");
 
-    setTimeout(() => {
-      this.navigateToScreen("rsvp")
-    }, 500)
-  }
-
-  selectMoneyGift() {
-    const moneyData = {
-      type: "money",
-    }
-
-    localStorage.setItem("moneySelection", JSON.stringify(moneyData))
-    localStorage.removeItem("giftSelection") // Clear gift selection if exists
-
-    this.showToast("Contribuição em dinheiro selecionada! Complete seu cadastro.", "success")
+    // Fecha o modal e limpa listeners
+    colorModal.style.display = "none";
+    colorButtons.forEach((btn) => btn.removeEventListener("click", handleColorSelection));
 
     setTimeout(() => {
-      this.navigateToScreen("rsvp")
-    }, 500)
-  }
+      this.navigateToScreen("rsvp");
+    }, 500);
+  };
+
+  colorButtons.forEach((btn) => btn.addEventListener("click", handleColorSelection));
+
+  cancelBtn.addEventListener("click", () => {
+    colorModal.style.display = "none";
+    colorButtons.forEach((btn) => btn.removeEventListener("click", handleColorSelection));
+  });
+}
+
 
   checkGiftSelection() {
     const indicator = document.getElementById("giftSelectionIndicator")
