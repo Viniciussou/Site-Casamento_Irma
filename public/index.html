@@ -466,22 +466,19 @@
                     </div>
                 </div>
 
-                <!-- Modal para seleção de cor -->
-                <div id="colorModal" class="color-modal" style="display: none;">
-                    <div class="color-modal-content">
-                        <h3>Escolha uma cor para o presente 🎨</h3>
-                        <div class="color-options">
-                            <button class="color-option" data-color="Branco"
-                                style="background-color: #ffffff;">Branco</button>
-                            <button class="color-option" data-color="Cinza"
-                                style="background-color: #cccccc;">Cinza</button>
-                            <button class="color-option" data-color="Preto"
-                                style="background-color: #000000; color: #fff;">Preto</button>
-                        </div>
-                        <div class="modal-actions">
-                            <button id="cancelColorSelection" class="btn-secondary">Cancelar</button>
-                        </div>
+                <!-- Seção de escolha de cor (exibida após selecionar presente) -->
+                <div id="colorSelectionSection" class="color-selection-section" style="display: none;">
+                    <h3>Escolha uma cor para o presente 🎨</h3>
+                    <p>Por favor, selecione uma cor antes de continuar</p>
+                    <div class="color-options">
+                        <button class="color-option" data-color="Branco"
+                            style="background-color: #ffffff;">Branco</button>
+                        <button class="color-option" data-color="Cinza"
+                            style="background-color: #cccccc;">Cinza</button>
+                        <button class="color-option" data-color="Preto"
+                            style="background-color: #000000; color: #fff;">Preto</button>
                     </div>
+                    <button id="cancelColorSelection" class="btn-secondary" style="margin-top: 1rem;">Cancelar</button>
                 </div>
 
                 <div class="navigation-footer">
