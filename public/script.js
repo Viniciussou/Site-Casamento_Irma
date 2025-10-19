@@ -80,7 +80,6 @@ class WeddingInvite {
         document.getElementById("exportCSV")?.addEventListener("click", () => this.exportCSV())
         this.closeFeedbackBtn?.addEventListener("click", () => this.hideFeedbackOverlay())
 
-        document.getElementById("openMoneyGiftModal")?.addEventListener("click", () => this.selectMoneyGift())
     }
 
     setupMusicPlayer() {
@@ -193,7 +192,6 @@ class WeddingInvite {
         const formData = new FormData(e.target)
 
         const giftSelection = localStorage.getItem("giftSelection")
-        const moneySelection = localStorage.getItem("moneySelection")
 
         const data = {
             name: formData.get("name")?.trim(),
@@ -202,7 +200,6 @@ class WeddingInvite {
             attending: formData.get("attending") === "sim",
             message: formData.get("message")?.trim() || "",
             gift: giftSelection ? JSON.parse(giftSelection) : null,
-            moneyContribution: moneySelection ? JSON.parse(moneySelection) : null,
         }
 
         if (!data.name || !data.contact || !formData.get("attending")) {
@@ -236,7 +233,6 @@ class WeddingInvite {
             }
 
             localStorage.removeItem("giftSelection")
-            localStorage.removeItem("moneySelection")
 
             this.showFeedbackOverlay(true, data.attending)
             e.target.reset()
@@ -329,11 +325,6 @@ class WeddingInvite {
                 this.renderGiftAdminTable(gifts)
             }
 
-            const moneyResponse = await fetch("/api/money-gifts")
-            if (moneyResponse.ok) {
-                const moneyGifts = await moneyResponse.json()
-                this.renderMoneyGiftAdminTable(moneyGifts)
-            }
         } catch (error) {
             console.error(error)
             this.showToast("Erro ao carregar dados do admin.", "error")
@@ -455,42 +446,6 @@ class WeddingInvite {
             )
             .join("")
     }
-
-    // ✅ Renderizar tabela de contribuições em dinheiro (painel admin)
-    renderMoneyGiftAdminTable(moneyGifts) {
-        const tbody = document.getElementById("moneyGiftTableBody") || document.getElementById("moneyGiftAdminSection")?.querySelector("tbody")
-        if (!tbody) return
-
-        if (!moneyGifts || moneyGifts.length === 0) {
-            tbody.innerHTML = `
-      <tr class="no-data">
-        <td colspan="4">
-          <div class="no-data-content">
-            <i class="fas fa-coins"></i>
-            <h4>Nenhuma contribuição em dinheiro ainda</h4>
-            <p>As contribuições aparecerão aqui quando forem registradas</p>
-          </div>
-        </td>
-      </tr>
-    `
-            return
-        }
-
-        tbody.innerHTML = moneyGifts
-            .sort((a, b) => new Date(b.date) - new Date(a.date))
-            .map(
-                (item, i) => `
-        <tr style="animation: fadeInUp 0.5s ease-out ${i * 0.1}s both;">
-          <td>${item.name}</td>
-          <td>${item.email}</td>
-          <td>${item.amount ? `R$ ${item.amount}` : "-"}</td>
-          <td>${new Date(item.date).toLocaleDateString("pt-BR")}</td>
-        </tr>
-      `,
-            )
-            .join("")
-    }
-
 
     async loadGifts() {
         const giftList = document.getElementById("giftList")
@@ -648,7 +603,6 @@ class WeddingInvite {
             };
 
             localStorage.setItem("giftSelection", JSON.stringify(giftData));
-            localStorage.removeItem("moneySelection");
 
             this.showToast(`"${gift.name}" (${selectedColor}) selecionado!`, "success");
 
@@ -679,14 +633,10 @@ class WeddingInvite {
         if (!indicator || !indicatorText) return
 
         const giftSelection = localStorage.getItem("giftSelection")
-        const moneySelection = localStorage.getItem("moneySelection")
 
         if (giftSelection) {
             const gift = JSON.parse(giftSelection)
             indicatorText.innerHTML = `<strong>Presente selecionado:</strong> ${gift.item}`
-            indicator.style.display = "block"
-        } else if (moneySelection) {
-            indicatorText.innerHTML = `<strong>Contribuição em dinheiro selecionada</strong>`
             indicator.style.display = "block"
         } else {
             indicator.style.display = "none"

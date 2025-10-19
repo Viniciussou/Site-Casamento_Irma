@@ -39,6 +39,7 @@ const initialGifts = [
   { name: "Chaleira elétrica", available: 1 },
   { name: "Geladeira", available: 1 },
   { name: "Cortinas", available: 1 },
+  { name: "Purificador de água", available: 1 },
   { name: "Almofadas de decoração", available: 1 },
   { name: "Colcha de cama", available: 6 },
   { name: "Aparelho de jantar", available: 2 },

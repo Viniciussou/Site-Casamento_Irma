@@ -53,7 +53,7 @@ module.exports = async function handler(req, res) {
   let db
 
   try {
-    ;({ db } = await connectToDatabase())
+    ; ({ db } = await connectToDatabase())
   } catch (err) {
     return res.writeHead(500, { "Content-Type": "application/json" }).end(JSON.stringify({ message: err.message }))
   }
@@ -93,17 +93,6 @@ module.exports = async function handler(req, res) {
           )
         }
       }
-
-      if (data.moneyContribution && data.moneyContribution.type === "money") {
-        const moneyGiftsCollection = db.collection("money_gifts")
-        await moneyGiftsCollection.insertOne({
-          name: data.name,
-          email: data.contact,
-          amount: 0, // Amount not specified in simplified flow
-          date: new Date(),
-        })
-      }
-
       return res
         .writeHead(201, { "Content-Type": "application/json" })
         .end(JSON.stringify({ message: "RSVP salvo com sucesso!" }))
