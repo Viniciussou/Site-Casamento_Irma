@@ -163,7 +163,6 @@ class WeddingInvite {
             this.animateScreenEntrance(screenName)
         }, 300)
 
-        if (screenName === "gift") this.loadGifts() // Auto carregar lista ao abrir tela de presentes
         if (screenName === "rsvp") this.checkGiftSelection()
     }
 
